@@ -17,6 +17,7 @@
             python3
             gcc
             clang
+            clang-tools
             cmake
             ninja
             pkg-config
