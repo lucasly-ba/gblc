@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(gamblec VERSION 0.1.0 LANGUAGES CXX)
+project(gblc VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,6 +12,7 @@ if(CCACHE_PROGRAM)
 endif()
 
 find_package(LLVM REQUIRED CONFIG)
+find_package(CLI11 REQUIRED CONFIG)
 
 llvm_map_components_to_libnames(LLVM_LIBS
     core
@@ -32,31 +33,32 @@ set(SOURCES
     src/codegen.cpp
 )
 
-add_library(gamble_runtime STATIC
+add_library(runtime STATIC
     runtime/runtime.cpp
 )
-target_include_directories(gamble_runtime PUBLIC runtime/)
+target_include_directories(runtime PUBLIC runtime/)
 
-add_executable(gamblec ${SOURCES})
-set_target_properties(gamblec PROPERTIES
+add_executable(gblc ${SOURCES})
+set_target_properties(gblc PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/src
 )
 
-target_include_directories(gamblec PRIVATE
+target_include_directories(gblc PRIVATE
     src/
     ${LLVM_INCLUDE_DIRS}
 )
 
-target_compile_definitions(gamblec PRIVATE
+target_compile_definitions(gblc PRIVATE
     ${LLVM_DEFINITIONS}
 )
 
-target_link_libraries(gamblec PRIVATE
-    gamble_runtime
+target_link_libraries(gblc PRIVATE
+    runtime
+    CLI11::CLI11
     ${LLVM_LIBS}
 )
 
-target_compile_options(gamblec PRIVATE
+target_compile_options(gblc PRIVATE
     -Wall
     -Wextra
     -Wpedantic
@@ -64,7 +66,7 @@ target_compile_options(gamblec PRIVATE
     $<$<CONFIG:Release>:-O3>
 )
 
-target_link_options(gamblec PRIVATE
+target_link_options(gblc PRIVATE
     $<$<CONFIG:Debug>:-fsanitize=address>
 )
 
