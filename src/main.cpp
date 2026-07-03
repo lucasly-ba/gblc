@@ -6,13 +6,13 @@
 
 int main(int argc, char* argv[])
 {
-    CLI::App app{ "gblc - Gamble compiler" };
+    CLI::App app{ "llb compiler" };
 
     std::string input_file;
     bool lex_trace = false;
     bool parse_trace = false;
 
-    app.add_option("file", input_file, "Input .gbl file")->required();
+    app.add_option("file", input_file, "Input .llb file")->required();
     app.add_flag("--lex-trace", lex_trace, "Trace the lexer");
     app.add_flag("--parse-trace", parse_trace, "Trace the parser");
 

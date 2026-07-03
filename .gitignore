@@ -1,5 +1,6 @@
 .envrc
+a.llb
 .direnv
 build
 .clangd
-src/gblc
+src/llbc
