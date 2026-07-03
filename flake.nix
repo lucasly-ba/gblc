@@ -1,5 +1,5 @@
 {
-  description = "Gamble compiler flake";
+  description = "gblc flake";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
