@@ -1,6 +1,7 @@
 #pragma once
 #include <ast/ast.h>
 #include <ast/fwd.h>
+#include <optional>
 #include <vector>
 
 namespace ast
@@ -65,20 +66,21 @@ namespace ast
     class SceneDec : public Dec
     {
     public:
-        SceneDec(const Location& location, std::string name, int max_players,
-                 exp_ptr precondition, std::vector<stmt_ptr> body);
-
         SceneDec(const Location& location, std::string name,
-                 exp_ptr precondition, std::vector<stmt_ptr> body);
-
-        SceneDec(const Location& location, std::string name, int max_players,
+                 std::optional<int> max_players, exp_ptr precondition,
                  std::vector<stmt_ptr> body);
 
         SceneDec(const Location& location, std::string name,
+                 exp_ptr precondition, std::vector<stmt_ptr> body);
+
+        SceneDec(const Location& location, std::string name,
+                 std::optional<int> max_players, std::vector<stmt_ptr> body);
+
+        SceneDec(const Location& location, std::string name,
                  std::vector<stmt_ptr> body);
 
-        int max_players_get() const;
-        void max_players_set(int max_players);
+        std::optional<int> max_players_get() const;
+        void max_players_set(std::optional<int> max_players);
 
         Exp* precondition_get() const;
         void precondition_set(exp_ptr precondition);
@@ -88,7 +90,7 @@ namespace ast
         void body_set(std::vector<stmt_ptr> body);
 
     private:
-        int max_players_;
+        std::optional<int> max_players_;
         exp_ptr precondition_;
         std::vector<stmt_ptr> body_;
     };

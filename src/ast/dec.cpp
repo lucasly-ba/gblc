@@ -1,12 +1,13 @@
 #include <ast/dec.h>
-
-#include "fwd.h"
+#include <ast/exp.h>
+#include <ast/stmt.h>
+#include <ast/type.h>
 
 namespace ast
 {
     Dec::Dec(const Location& location, std::string name)
         : Ast(location)
-        , name_(name)
+        , name_(std::move(name))
     {}
 
     std::string Dec::name_get() const
@@ -16,18 +17,18 @@ namespace ast
 
     void Dec::name_set(std::string name)
     {
-        name_ = name;
+        name_ = std::move(name);
     }
 
     VarDec::VarDec(const Location& location, std::string name, type_ptr type,
                    exp_ptr init)
-        : Dec(location, name)
+        : Dec(location, std::move(name))
         , type_(std::move(type))
         , init_(std::move(init))
     {}
 
     VarDec::VarDec(const Location& location, std::string name, exp_ptr init)
-        : Dec(location, name)
+        : Dec(location, std::move(name))
         , type_(nullptr)
         , init_(std::move(init))
     {}
@@ -55,7 +56,7 @@ namespace ast
     FuncDec::FuncDec(const Location& location, std::string name,
                      std::vector<std::unique_ptr<VarDec>> params, type_ptr type,
                      std::vector<stmt_ptr> body)
-        : Dec(location, name)
+        : Dec(location, std::move(name))
         , params_(std::move(params))
         , type_(std::move(type))
         , body_(std::move(body))
@@ -64,7 +65,7 @@ namespace ast
     FuncDec::FuncDec(const Location& location, std::string name,
                      std::vector<std::unique_ptr<VarDec>> params,
                      std::vector<stmt_ptr> body)
-        : Dec(location, name)
+        : Dec(location, std::move(nastd::move(me)))
         , params_(std::move(params))
         , type_(nullptr)
         , body_(std::move(body))
@@ -112,7 +113,7 @@ namespace ast
     }
 
     SceneDec::SceneDec(const Location& location, std::string name,
-                       int max_players, exp_ptr precondition,
+                       std::optional<int> max_players, exp_ptr precondition,
                        std::vector<stmt_ptr> body)
         : Dec(location, std::move(name))
         , max_players_(max_players)
@@ -123,13 +124,14 @@ namespace ast
     SceneDec::SceneDec(const Location& location, std::string name,
                        exp_ptr precondition, std::vector<stmt_ptr> body)
         : Dec(location, std::move(name))
-        , max_players_(-1)
+        , max_players_(std::nullopt)
         , precondition_(std::move(precondition))
         , body_(std::move(body))
     {}
 
     SceneDec::SceneDec(const Location& location, std::string name,
-                       int max_players, std::vector<stmt_ptr> body)
+                       std::optional<int> max_players,
+                       std::vector<stmt_ptr> body)
         : Dec(location, std::move(name))
         , max_players_(max_players)
         , precondition_(nullptr)
@@ -139,17 +141,17 @@ namespace ast
     SceneDec::SceneDec(const Location& location, std::string name,
                        std::vector<stmt_ptr> body)
         : Dec(location, std::move(name))
-        , max_players_(-1)
+        , max_players_(std::nullopt)
         , precondition_(nullptr)
         , body_(std::move(body))
     {}
 
-    int SceneDec::max_players_get() const
+    std::optional<int> SceneDec::max_players_get() const
     {
         return max_players_;
     }
 
-    void SceneDec::max_players_set(int max_players)
+    void SceneDec::max_players_set(std::optional<int> max_players)
     {
         max_players_ = max_players;
     }
@@ -181,7 +183,7 @@ namespace ast
 
     PlayerDec::PlayerDec(const Location& location, std::string name,
                          exp_ptr dollar, exp_ptr chance, exp_ptr reputation)
-        : Dec(location, name)
+        : Dec(location, std::move(name))
         , dollar_(std::move(dollar))
         , chance_(std::move(chance))
         , reputation_(std::move(reputation))
