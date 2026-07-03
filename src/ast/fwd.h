@@ -9,12 +9,16 @@ namespace ast
     class VarDec;
     class FuncDec;
     class SceneDec;
+    class PlayerDec;
 
     class Exp;
     class OpExp;
     class IntLitExp;
-    class DollarsLitExp;
     class StringLitExp;
+    class BoolLitExp;
+    class DollarsLitExp;
+    class ChanceLitExp;
+    class ReputationLitExp;
     class CallExp;
     class IdentExp;
     class BuiltinExp;
