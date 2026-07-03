@@ -1,5 +1,7 @@
 #include <ast/dec.h>
 
+#include "fwd.h"
+
 namespace ast
 {
     Dec::Dec(const Location& location, std::string name)
@@ -34,6 +36,7 @@ namespace ast
     {
         return type_.get();
     }
+
     void VarDec::type_set(type_ptr type)
     {
         type_ = std::move(type);
@@ -109,18 +112,47 @@ namespace ast
     }
 
     SceneDec::SceneDec(const Location& location, std::string name,
-                       exp_ptr precondition, std::vector<stmt_ptr> body)
-        : Dec(location, name)
+                       int max_players, exp_ptr precondition,
+                       std::vector<stmt_ptr> body)
+        : Dec(location, std::move(name))
+        , max_players_(max_players)
         , precondition_(std::move(precondition))
         , body_(std::move(body))
     {}
 
     SceneDec::SceneDec(const Location& location, std::string name,
-                       std::vector<stmt_ptr> body)
-        : Dec(location, name)
+                       exp_ptr precondition, std::vector<stmt_ptr> body)
+        : Dec(location, std::move(name))
+        , max_players_(-1)
+        , precondition_(std::move(precondition))
+        , body_(std::move(body))
+    {}
+
+    SceneDec::SceneDec(const Location& location, std::string name,
+                       int max_players, std::vector<stmt_ptr> body)
+        : Dec(location, std::move(name))
+        , max_players_(max_players)
         , precondition_(nullptr)
         , body_(std::move(body))
     {}
+
+    SceneDec::SceneDec(const Location& location, std::string name,
+                       std::vector<stmt_ptr> body)
+        : Dec(location, std::move(name))
+        , max_players_(-1)
+        , precondition_(nullptr)
+        , body_(std::move(body))
+    {}
+
+    int SceneDec::max_players_get() const
+    {
+        return max_players_;
+    }
+
+    void SceneDec::max_players_set(int max_players)
+    {
+        max_players_ = max_players;
+    }
 
     Exp* SceneDec::precondition_get() const
     {
@@ -147,4 +179,41 @@ namespace ast
         body_ = std::move(body);
     }
 
+    PlayerDec::PlayerDec(const Location& location, std::string name,
+                         exp_ptr dollar, exp_ptr chance, exp_ptr reputation)
+        : Dec(location, name)
+        , dollar_(std::move(dollar))
+        , chance_(std::move(chance))
+        , reputation_(std::move(reputation))
+    {}
+
+    Exp& PlayerDec::dollar_get() const
+    {
+        return *dollar_;
+    }
+
+    void PlayerDec::dollar_set(exp_ptr dollar)
+    {
+        dollar_ = std::move(dollar);
+    }
+
+    Exp& PlayerDec::chance_get() const
+    {
+        return *chance_;
+    }
+
+    void PlayerDec::chance_set(exp_ptr chance)
+    {
+        chance_ = std::move(chance);
+    }
+
+    Exp& PlayerDec::reputation_get() const
+    {
+        return *reputation_;
+    }
+
+    void PlayerDec::reputation_set(exp_ptr reputation)
+    {
+        reputation_ = std::move(reputation);
+    }
 } // namespace ast

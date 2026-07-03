@@ -65,11 +65,20 @@ namespace ast
     class SceneDec : public Dec
     {
     public:
-        SceneDec(const Location& location, std::string name,
+        SceneDec(const Location& location, std::string name, int max_players,
                  exp_ptr precondition, std::vector<stmt_ptr> body);
 
         SceneDec(const Location& location, std::string name,
+                 exp_ptr precondition, std::vector<stmt_ptr> body);
+
+        SceneDec(const Location& location, std::string name, int max_players,
                  std::vector<stmt_ptr> body);
+
+        SceneDec(const Location& location, std::string name,
+                 std::vector<stmt_ptr> body);
+
+        int max_players_get() const;
+        void max_players_set(int max_players);
 
         Exp* precondition_get() const;
         void precondition_set(exp_ptr precondition);
@@ -79,8 +88,28 @@ namespace ast
         void body_set(std::vector<stmt_ptr> body);
 
     private:
+        int max_players_;
         exp_ptr precondition_;
         std::vector<stmt_ptr> body_;
+    };
+
+    class PlayerDec : public Dec
+    {
+    public:
+        PlayerDec(const Location& location, std::string name, exp_ptr dollar,
+                  exp_ptr chance, exp_ptr reputation);
+
+        Exp& dollar_get() const;
+        void dollar_set(exp_ptr dollar);
+        Exp& chance_get() const;
+        void chance_set(exp_ptr chance);
+        Exp& reputation_get() const;
+        void reputation_set(exp_ptr reputation);
+
+    private:
+        exp_ptr dollar_;
+        exp_ptr chance_;
+        exp_ptr reputation_;
     };
 
 } // namespace ast
