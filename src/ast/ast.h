@@ -33,7 +33,7 @@ namespace ast
     class Program
     {
     public:
-        Program(const Location& location, std::vector<dec_ptr> decs);
+        explicit Program(std::vector<dec_ptr> decs);
 
         const std::vector<dec_ptr>& decs_get() const;
         std::vector<dec_ptr>& decs_get();
