@@ -1,0 +1,165 @@
+#include <ast/exp.h>
+
+namespace ast
+{
+    Exp::Exp(const Location& location)
+        : Ast(location)
+    {}
+
+    OpExp::OpExp(const Location& location, exp_ptr left, Oper oper,
+                 exp_ptr right)
+        : Exp(location)
+        , left_(std::move(left))
+        , oper_(oper)
+        , right_(std::move(right))
+    {}
+
+    Exp& OpExp::left_get() const
+    {
+        return *left_;
+    }
+
+    void OpExp::left_set(exp_ptr left)
+    {
+        left_ = std::move(left);
+    }
+
+    OpExp::Oper OpExp::oper_get() const
+    {
+        return oper_;
+    }
+
+    void OpExp::oper_set(Oper oper)
+    {
+        oper_ = oper;
+    }
+
+    Exp& OpExp::right_get() const
+    {
+        return *right_;
+    }
+
+    void OpExp::right_set(exp_ptr right)
+    {
+        right_ = std::move(right);
+    }
+
+    IntExp::IntExp(const Location& location, int value)
+        : Exp(location)
+        , value_(value)
+    {}
+
+    int IntExp::value_get() const
+    {
+        return value_;
+    }
+
+    void IntExp::value_set(int value)
+    {
+        value_ = value;
+    }
+
+    FloatExp::FloatExp(const Location& location, float value)
+        : Exp(location)
+        , value_(value)
+    {}
+
+    float FloatExp::value_get() const
+    {
+        return value_;
+    }
+
+    void FloatExp::value_set(float value)
+    {
+        value_ = value;
+    }
+
+    StringExp::StringExp(const Location& location, std::string value)
+        : Exp(location)
+        , value_(std::move(value))
+    {}
+
+    const std::string& StringExp::value_get() const
+    {
+        return value_;
+    }
+
+    void StringExp::value_set(std::string value)
+    {
+        value_ = std::move(value);
+    }
+
+    BoolExp::BoolExp(const Location& location, bool value)
+        : Exp(location)
+        , value_(value)
+    {}
+
+    bool BoolExp::value_get() const
+    {
+        return value_;
+    }
+
+    void BoolExp::value_set(bool value)
+    {
+        value_ = value;
+    }
+
+    DollarExp::DollarExp(const Location& location, int value)
+        : IntExp(location, value)
+    {}
+
+    ChanceExp::ChanceExp(const Location& location, int value)
+        : IntExp(location, value)
+    {}
+
+    ReputationExp::ReputationExp(const Location& location, int value)
+        : IntExp(location, value)
+    {}
+
+    CallExp::CallExp(const Location& location, std::string name,
+                     std::vector<exp_ptr> args)
+        : Exp(location)
+        , name_(std::move(name))
+        , args_(std::move(args))
+    {}
+
+    const std::string& CallExp::name_get() const
+    {
+        return name_;
+    }
+
+    void CallExp::name_set(std::string name)
+    {
+        name_ = std::move(name);
+    }
+
+    const std::vector<exp_ptr>& CallExp::args_get() const
+    {
+        return args_;
+    }
+
+    std::vector<exp_ptr>& CallExp::args_get()
+    {
+        return args_;
+    }
+
+    void CallExp::args_set(std::vector<exp_ptr> args)
+    {
+        args_ = std::move(args);
+    }
+
+    IdentExp::IdentExp(const Location& location, std::string name)
+        : Exp(location)
+        , name_(std::move(name))
+    {}
+
+    const std::string& IdentExp::name_get() const
+    {
+        return name_;
+    }
+
+    void IdentExp::name_set(std::string name)
+    {
+        name_ = std::move(name);
+    }
+} // namespace ast

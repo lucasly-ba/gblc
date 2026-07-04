@@ -1,6 +1,7 @@
 #pragma once
 #include <ast/ast.h>
 #include <ast/fwd.h>
+#include <ast/type.h>
 #include <optional>
 #include <vector>
 
@@ -20,18 +21,18 @@ namespace ast
     class VarDec : public Dec
     {
     public:
-        VarDec(const Location& location, std::string name, type_ptr type,
+        VarDec(const Location& location, std::string name, Type type,
                exp_ptr init);
         VarDec(const Location& location, std::string name, exp_ptr init);
 
-        Type* type_get() const;
-        void type_set(type_ptr type);
+        std::optional<Type> type_get() const;
+        void type_set(Type type);
 
         Exp* init_get() const;
         void init_set(exp_ptr init);
 
     private:
-        type_ptr type_;
+        std::optional<Type> type_;
         exp_ptr init_;
     };
 
@@ -39,27 +40,26 @@ namespace ast
     {
     public:
         FuncDec(const Location& location, std::string name,
-                std::vector<std::unique_ptr<VarDec>> params, type_ptr type,
+                std::vector<std::unique_ptr<VarDec>> args, Type type,
                 std::vector<stmt_ptr> body);
-
         FuncDec(const Location& location, std::string name,
-                std::vector<std::unique_ptr<VarDec>> params,
+                std::vector<std::unique_ptr<VarDec>> args,
                 std::vector<stmt_ptr> body);
 
-        const std::vector<std::unique_ptr<VarDec>>& params_get() const;
-        std::vector<std::unique_ptr<VarDec>>& params_get();
-        void params_set(std::vector<std::unique_ptr<VarDec>> params);
+        const std::vector<std::unique_ptr<VarDec>>& args_get() const;
+        std::vector<std::unique_ptr<VarDec>>& args_get();
+        void args_set(std::vector<std::unique_ptr<VarDec>> args);
 
-        Type* type_get() const;
-        void type_set(type_ptr type);
+        std::optional<Type> type_get() const;
+        void type_set(Type type);
 
         const std::vector<stmt_ptr>& body_get() const;
         std::vector<stmt_ptr>& body_get();
         void body_set(std::vector<stmt_ptr> body);
 
     private:
-        std::vector<std::unique_ptr<VarDec>> params_;
-        type_ptr type_;
+        std::vector<std::unique_ptr<VarDec>> args_;
+        std::optional<Type> type_;
         std::vector<stmt_ptr> body_;
     };
 

@@ -37,9 +37,11 @@ namespace ast
         void condition_set(exp_ptr condition);
 
         const std::vector<stmt_ptr>& then_branch_get() const;
+        std::vector<stmt_ptr>& then_branch_get();
         void then_branch_set(std::vector<stmt_ptr> then_branch);
 
         const std::vector<stmt_ptr>& else_branch_get() const;
+        std::vector<stmt_ptr>& else_branch_get();
         void else_branch_set(std::vector<stmt_ptr> else_branch);
 
     private:
@@ -85,6 +87,7 @@ namespace ast
         ExpStmt(const Location& location, exp_ptr exp);
 
         Exp& exp_get() const;
+        void exp_set(exp_ptr exp);
 
     private:
         exp_ptr exp_;

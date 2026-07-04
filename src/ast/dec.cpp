@@ -20,27 +20,27 @@ namespace ast
         name_ = std::move(name);
     }
 
-    VarDec::VarDec(const Location& location, std::string name, type_ptr type,
+    VarDec::VarDec(const Location& location, std::string name, Type type,
                    exp_ptr init)
         : Dec(location, std::move(name))
-        , type_(std::move(type))
+        , type_(type)
         , init_(std::move(init))
     {}
 
     VarDec::VarDec(const Location& location, std::string name, exp_ptr init)
         : Dec(location, std::move(name))
-        , type_(nullptr)
+        , type_(std::nullopt)
         , init_(std::move(init))
     {}
 
-    Type* VarDec::type_get() const
+    std::optional<Type> VarDec::type_get() const
     {
-        return type_.get();
+        return type_;
     }
 
-    void VarDec::type_set(type_ptr type)
+    void VarDec::type_set(Type type)
     {
-        type_ = std::move(type);
+        type_ = type;
     }
 
     Exp* VarDec::init_get() const
@@ -54,47 +54,46 @@ namespace ast
     }
 
     FuncDec::FuncDec(const Location& location, std::string name,
-                     std::vector<std::unique_ptr<VarDec>> params, type_ptr type,
+                     std::vector<std::unique_ptr<VarDec>> args, Type type,
                      std::vector<stmt_ptr> body)
         : Dec(location, std::move(name))
-        , params_(std::move(params))
-        , type_(std::move(type))
+        , args_(std::move(args))
+        , type_(type)
         , body_(std::move(body))
     {}
 
     FuncDec::FuncDec(const Location& location, std::string name,
-                     std::vector<std::unique_ptr<VarDec>> params,
+                     std::vector<std::unique_ptr<VarDec>> args,
                      std::vector<stmt_ptr> body)
-        : Dec(location, std::move(nastd::move(me)))
-        , params_(std::move(params))
-        , type_(nullptr)
+        : Dec(location, std::move(name))
+        , args_(std::move(args))
+        , type_(std::nullopt)
         , body_(std::move(body))
-
     {}
 
-    const std::vector<std::unique_ptr<VarDec>>& FuncDec::params_get() const
+    const std::vector<std::unique_ptr<VarDec>>& FuncDec::args_get() const
     {
-        return params_;
+        return args_;
     }
 
-    std::vector<std::unique_ptr<VarDec>>& FuncDec::params_get()
+    std::vector<std::unique_ptr<VarDec>>& FuncDec::args_get()
     {
-        return params_;
+        return args_;
     }
 
-    void FuncDec::params_set(std::vector<std::unique_ptr<VarDec>> params)
+    void FuncDec::args_set(std::vector<std::unique_ptr<VarDec>> args)
     {
-        params_ = std::move(params);
+        args_ = std::move(args);
     }
 
-    Type* FuncDec::type_get() const
+    std::optional<Type> FuncDec::type_get() const
     {
-        return type_.get();
+        return type_;
     }
 
-    void FuncDec::type_set(type_ptr type)
+    void FuncDec::type_set(Type type)
     {
-        type_ = std::move(type);
+        type_ = type;
     }
 
     const std::vector<stmt_ptr>& FuncDec::body_get() const

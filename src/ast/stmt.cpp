@@ -1,0 +1,137 @@
+#include <ast/dec.h>
+#include <ast/exp.h>
+#include <ast/stmt.h>
+#include <ast/type.h>
+
+namespace ast
+{
+    Stmt::Stmt(const Location& location)
+        : Ast(location)
+    {}
+
+    LetStmt::LetStmt(const Location& location, std::unique_ptr<VarDec> vardec)
+        : Stmt(location)
+        , vardec_(std::move(vardec))
+    {}
+
+    VarDec& LetStmt::vardec_get() const
+    {
+        return *vardec_;
+    }
+
+    void LetStmt::vardec_set(std::unique_ptr<VarDec> vardec)
+    {
+        vardec_ = std::move(vardec);
+    }
+
+    IfStmt::IfStmt(const Location& location, exp_ptr condition,
+                   std::vector<stmt_ptr> then_branch,
+                   std::vector<stmt_ptr> else_branch)
+        : Stmt(location)
+        , condition_(std::move(condition))
+        , then_branch_(std::move(then_branch))
+        , else_branch_(std::move(else_branch))
+    {}
+
+    IfStmt::IfStmt(const Location& location, exp_ptr condition,
+                   std::vector<stmt_ptr> then_branch)
+        : Stmt(location)
+        , condition_(std::move(condition))
+        , then_branch_(std::move(then_branch))
+        , else_branch_()
+    {}
+
+    Exp& IfStmt::condition_get() const
+    {
+        return *condition_;
+    }
+
+    void IfStmt::condition_set(exp_ptr condition)
+    {
+        condition_ = std::move(condition);
+    }
+
+    const std::vector<stmt_ptr>& IfStmt::then_branch_get() const
+    {
+        return then_branch_;
+    }
+
+    std::vector<stmt_ptr>& IfStmt::then_branch_get()
+    {
+        return then_branch_;
+    }
+
+    void IfStmt::then_branch_set(std::vector<stmt_ptr> then_branch)
+    {
+        then_branch_ = std::move(then_branch);
+    }
+
+    const std::vector<stmt_ptr>& IfStmt::else_branch_get() const
+    {
+        return else_branch_;
+    }
+
+    std::vector<stmt_ptr>& IfStmt::else_branch_get()
+    {
+        return else_branch_;
+    }
+
+    void IfStmt::else_branch_set(std::vector<stmt_ptr> else_branch)
+    {
+        else_branch_ = std::move(else_branch);
+    }
+
+    LoopStmt::LoopStmt(const Location& location, std::vector<stmt_ptr> body)
+        : Stmt(location)
+        , body_(std::move(body))
+    {}
+
+    const std::vector<stmt_ptr>& LoopStmt::body_get() const
+    {
+        return body_;
+    }
+
+    void LoopStmt::body_set(std::vector<stmt_ptr> body)
+    {
+        body_ = std::move(body);
+    }
+
+    BreakStmt::BreakStmt(const Location& location)
+        : Stmt(location)
+    {}
+
+    ReturnStmt::ReturnStmt(const Location& location, exp_ptr value)
+        : Stmt(location)
+        , value_(std::move(value))
+    {}
+
+    ReturnStmt::ReturnStmt(const Location& location)
+        : Stmt(location)
+        , value_(nullptr)
+    {}
+
+    Exp* ReturnStmt::value_get() const
+    {
+        return value_.get();
+    }
+
+    void ReturnStmt::value_set(exp_ptr value)
+    {
+        value_ = std::move(value);
+    }
+
+    ExpStmt::ExpStmt(const Location& location, exp_ptr exp)
+        : Stmt(location)
+        , exp_(std::move(exp))
+    {}
+
+    Exp& ExpStmt::exp_get() const
+    {
+        return *exp_;
+    }
+
+    void ExpStmt::exp_set(exp_ptr exp)
+    {
+        exp_ = std::move(exp);
+    }
+} // namespace ast

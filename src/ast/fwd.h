@@ -13,12 +13,13 @@ namespace ast
 
     class Exp;
     class OpExp;
-    class IntLitExp;
-    class StringLitExp;
-    class BoolLitExp;
-    class DollarsLitExp;
-    class ChanceLitExp;
-    class ReputationLitExp;
+    class IntExp;
+    class FloatExp;
+    class StringExp;
+    class BoolExp;
+    class DollarExp;
+    class ChanceExp;
+    class ReputationExp;
     class CallExp;
     class IdentExp;
 
@@ -30,11 +31,8 @@ namespace ast
     class ReturnStmt;
     class ExprStmt;
 
-    class Type;
-
     class Visitor;
 
-    using type_ptr = std::unique_ptr<Type>;
     using dec_ptr = std::unique_ptr<Dec>;
     using exp_ptr = std::unique_ptr<Exp>;
     using stmt_ptr = std::unique_ptr<Stmt>;
