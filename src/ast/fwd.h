@@ -29,13 +29,8 @@ namespace ast
     class LoopStmt;
     class BreakStmt;
     class ReturnStmt;
-    class MatchStmt;
     class ExprStmt;
     class BuiltinStmt;
-
-    class Pattern;
-    class StringPattern;
-    class WildcardPattern;
 
     class Type;
 
