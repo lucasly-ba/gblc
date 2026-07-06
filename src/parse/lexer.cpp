@@ -60,9 +60,9 @@ namespace parser
         case ')':
             return lex_symbol_token(TokenKind::RPar);
         case '{':
-            return lex_symbol_token(TokenKind::LBrack);
+            return lex_symbol_token(TokenKind::LBrace);
         case '}':
-            return lex_symbol_token(TokenKind::RBrack);
+            return lex_symbol_token(TokenKind::RBrace);
         case ':':
             return lex_symbol_token(TokenKind::Colon);
         case ',':

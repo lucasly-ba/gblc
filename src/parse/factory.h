@@ -15,6 +15,10 @@ namespace parser
     ast::dec_ptr make_VarDec(const ast::Location& location, std::string name,
                              ast::exp_ptr init);
 
+    std::unique_ptr<ast::VarDec>
+    make_var_dec_typed(const ast::Location& location, std::string name,
+                       ast::Type type);
+
     ast::dec_ptr make_FuncDec(const ast::Location& location, std::string name,
                               std::vector<std::unique_ptr<ast::VarDec>> args,
                               ast::Type type, std::vector<ast::stmt_ptr> body);
@@ -29,7 +33,7 @@ namespace parser
                                std::vector<ast::stmt_ptr> body);
 
     ast::dec_ptr make_PlayerDec(const ast::Location& location, std::string name,
-                                ast::exp_ptr dollar, ast::exp_ptr chance,
+                                ast::exp_ptr dollars, ast::exp_ptr chance,
                                 ast::exp_ptr reputation);
 
     ast::exp_ptr make_OpExp(const ast::Location& location, ast::exp_ptr left,
@@ -42,7 +46,7 @@ namespace parser
 
                                 std::string value);
     ast::exp_ptr make_BoolExp(const ast::Location& location, bool value);
-    ast::exp_ptr make_DollarExp(const ast::Location& location, int value);
+    ast::exp_ptr make_DollarsExp(const ast::Location& location, int value);
     ast::exp_ptr make_ChanceExp(const ast::Location& location, int value);
     ast::exp_ptr make_ReputationExp(const ast::Location& location, int value);
 

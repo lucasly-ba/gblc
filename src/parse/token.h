@@ -26,7 +26,7 @@ namespace parser
         Float,
         String,
         Bool,
-        Dollar,
+        Dollars,
         Chance,
         Enter,
 
@@ -48,8 +48,8 @@ namespace parser
         // Symbols
         LPar,
         RPar,
-        LBrack,
-        RBrack,
+        LBrace,
+        RBrace,
         Colon,
         Arrow,
         Comma,
@@ -93,13 +93,11 @@ namespace parser
         { "float", TokenKind::Float },
         { "string", TokenKind::String },
         { "bool", TokenKind::Bool },
-        { "dollar", TokenKind::Dollar },
+        { "dollars", TokenKind::Dollars },
         { "chance", TokenKind::Chance },
         { "reputation", TokenKind::Reputation },
         { "true", TokenKind::BoolLit },
         { "false", TokenKind::BoolLit },
-        { "dollar", TokenKind::Dollar },
-        { "chance", TokenKind::Chance },
         { "enters", TokenKind::Enter },
         { "start", TokenKind::Start },
         { "max", TokenKind::Max },
@@ -150,8 +148,8 @@ namespace parser
             return "String";
         case TokenKind::Bool:
             return "Bool";
-        case TokenKind::Dollar:
-            return "Dollar";
+        case TokenKind::Dollars:
+            return "Dollars";
         case TokenKind::Chance:
             return "Chance";
         case TokenKind::Reputation:

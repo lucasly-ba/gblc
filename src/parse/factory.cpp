@@ -6,159 +6,161 @@
 
 namespace parser
 {
+    using namespace ast;
 
-    ast::dec_ptr make_VarDec(const ast::Location& location, std::string name,
-                             ast::Type type, ast::exp_ptr init)
+    dec_ptr make_VarDec(const Location& location, std::string name, Type type,
+                        exp_ptr init)
+    {
+        return std::make_unique<VarDec>(location, std::move(name), type,
+                                        std::move(init));
+    }
+
+    dec_ptr make_VarDec(const Location& location, std::string name,
+                        exp_ptr init)
+    {
+        return std::make_unique<VarDec>(location, std::move(name),
+                                        std::move(init));
+    }
+
+    std::unique_ptr<ast::VarDec>
+    make_var_dec_typed(const ast::Location& location, std::string name,
+                       ast::Type type)
     {
         return std::make_unique<ast::VarDec>(location, std::move(name), type,
-                                             std::move(init));
+                                             nullptr);
     }
 
-    ast::dec_ptr make_VarDec(const ast::Location& location, std::string name,
-                             ast::exp_ptr init)
+    dec_ptr make_FuncDec(const Location& location, std::string name,
+                         std::vector<std::unique_ptr<VarDec>> args, Type type,
+                         std::vector<stmt_ptr> body)
     {
-        return std::make_unique<ast::VarDec>(location, std::move(name),
-                                             std::move(init));
-    }
-
-    ast::dec_ptr make_FuncDec(const ast::Location& location, std::string name,
-                              std::vector<std::unique_ptr<ast::VarDec>> args,
-                              ast::Type type, std::vector<ast::stmt_ptr> body)
-    {
-        return std::make_unique<ast::FuncDec>(
+        return std::make_unique<FuncDec>(
             location, std::move(name), std::move(args), type, std::move(body));
     }
 
-    ast::dec_ptr make_FuncDec(const ast::Location& location, std::string name,
-                              std::vector<std::unique_ptr<ast::VarDec>> args,
-                              std::vector<ast::stmt_ptr> body)
+    dec_ptr make_FuncDec(const Location& location, std::string name,
+                         std::vector<std::unique_ptr<VarDec>> args,
+                         std::vector<stmt_ptr> body)
     {
-        return std::make_unique<ast::FuncDec>(location, std::move(name),
-                                              std::move(args), std::move(body));
+        return std::make_unique<FuncDec>(location, std::move(name),
+                                         std::move(args), std::move(body));
     }
 
-    ast::dec_ptr make_SceneDec(const ast::Location& location, std::string name,
-                               std::optional<int> max_players,
-                               ast::exp_ptr precondition,
-                               std::vector<ast::stmt_ptr> body)
+    dec_ptr make_SceneDec(const Location& location, std::string name,
+                          std::optional<int> max_players, exp_ptr precondition,
+                          std::vector<stmt_ptr> body)
     {
-        return std::make_unique<ast::SceneDec>(
-            location, std::move(name), max_players, std::move(precondition),
-            std::move(body));
+        return std::make_unique<SceneDec>(location, std::move(name),
+                                          max_players, std::move(precondition),
+                                          std::move(body));
     }
 
-    ast::dec_ptr make_PlayerDec(const ast::Location& location, std::string name,
-                                ast::exp_ptr dollar, ast::exp_ptr chance,
-                                ast::exp_ptr reputation)
+    dec_ptr make_PlayerDec(const Location& location, std::string name,
+                           exp_ptr dollars, exp_ptr chance, exp_ptr reputation)
     {
-        return std::make_unique<ast::PlayerDec>(
-            location, std::move(name), std::move(dollar), std::move(chance),
+        return std::make_unique<PlayerDec>(
+            location, std::move(name), std::move(dollars), std::move(chance),
             std::move(reputation));
     }
 
-    ast::exp_ptr make_OpExp(const ast::Location& location, ast::exp_ptr left,
-                            ast::OpExp::Oper oper, ast::exp_ptr right)
+    exp_ptr make_OpExp(const Location& location, exp_ptr left, OpExp::Oper oper,
+                       exp_ptr right)
     {
-        return std::make_unique<ast::OpExp>(location, std::move(left), oper,
-                                            std::move(right));
+        return std::make_unique<OpExp>(location, std::move(left), oper,
+                                       std::move(right));
     }
 
-    ast::exp_ptr make_IntExp(const ast::Location& location, int value)
+    exp_ptr make_IntExp(const Location& location, int value)
     {
-        return std::make_unique<ast::IntExp>(location, value);
+        return std::make_unique<IntExp>(location, value);
     }
 
-    ast::exp_ptr make_FloatExp(const ast::Location& location, float value)
+    exp_ptr make_FloatExp(const Location& location, float value)
     {
-        return std::make_unique<ast::FloatExp>(location, value);
+        return std::make_unique<FloatExp>(location, value);
     }
 
-    ast::exp_ptr make_StringExp(const ast::Location& location,
-                                std::string value)
+    exp_ptr make_StringExp(const Location& location, std::string value)
     {
-        return std::make_unique<ast::StringExp>(location, std::move(value));
+        return std::make_unique<StringExp>(location, std::move(value));
     }
 
-    ast::exp_ptr make_BoolExp(const ast::Location& location, bool value)
+    exp_ptr make_BoolExp(const Location& location, bool value)
     {
-        return std::make_unique<ast::BoolExp>(location, value);
+        return std::make_unique<BoolExp>(location, value);
     }
 
-    ast::exp_ptr make_DollarExp(const ast::Location& location, int value)
+    exp_ptr make_DollarsExp(const Location& location, int value)
     {
-        return std::make_unique<ast::DollarExp>(location, value);
+        return std::make_unique<DollarsExp>(location, value);
     }
 
-    ast::exp_ptr make_ChanceExp(const ast::Location& location, int value)
+    exp_ptr make_ChanceExp(const Location& location, int value)
     {
-        return std::make_unique<ast::ChanceExp>(location, value);
+        return std::make_unique<ChanceExp>(location, value);
     }
 
-    ast::exp_ptr make_ReputationExp(const ast::Location& location, int value)
+    exp_ptr make_ReputationExp(const Location& location, int value)
     {
-        return std::make_unique<ast::ReputationExp>(location, value);
+        return std::make_unique<ReputationExp>(location, value);
     }
 
-    ast::exp_ptr make_CallExp(const ast::Location& location, std::string name,
-                              std::vector<ast::exp_ptr> args)
+    exp_ptr make_CallExp(const Location& location, std::string name,
+                         std::vector<exp_ptr> args)
     {
-        return std::make_unique<ast::CallExp>(location, std::move(name),
-                                              std::move(args));
+        return std::make_unique<CallExp>(location, std::move(name),
+                                         std::move(args));
     }
 
-    ast::exp_ptr make_IdentExp(const ast::Location& location, std::string name)
+    exp_ptr make_IdentExp(const Location& location, std::string name)
     {
-        return std::make_unique<ast::IdentExp>(location, std::move(name));
+        return std::make_unique<IdentExp>(location, std::move(name));
     }
 
-    ast::stmt_ptr make_VarStmt(const ast::Location& location,
-                               std::unique_ptr<ast::VarDec> vardec)
+    stmt_ptr make_VarStmt(const Location& location,
+                          std::unique_ptr<VarDec> vardec)
     {
-        return std::make_unique<ast::VarStmt>(location, std::move(vardec));
+        return std::make_unique<VarStmt>(location, std::move(vardec));
     }
 
-    ast::stmt_ptr make_IfStmt(const ast::Location& location,
-                              ast::exp_ptr condition,
-                              std::vector<ast::stmt_ptr> then_branch,
-                              std::vector<ast::stmt_ptr> else_branch)
+    stmt_ptr make_IfStmt(const Location& location, exp_ptr condition,
+                         std::vector<stmt_ptr> then_branch,
+                         std::vector<stmt_ptr> else_branch)
     {
-        return std::make_unique<ast::IfStmt>(location, std::move(condition),
-                                             std::move(then_branch),
-                                             std::move(else_branch));
+        return std::make_unique<IfStmt>(location, std::move(condition),
+                                        std::move(then_branch),
+                                        std::move(else_branch));
     }
 
-    ast::stmt_ptr make_IfStmt(const ast::Location& location,
-                              ast::exp_ptr condition,
-                              std::vector<ast::stmt_ptr> then_branch)
+    stmt_ptr make_IfStmt(const Location& location, exp_ptr condition,
+                         std::vector<stmt_ptr> then_branch)
     {
-        return std::make_unique<ast::IfStmt>(location, std::move(condition),
-                                             std::move(then_branch));
+        return std::make_unique<IfStmt>(location, std::move(condition),
+                                        std::move(then_branch));
     }
 
-    ast::stmt_ptr make_LoopStmt(const ast::Location& location,
-                                std::vector<ast::stmt_ptr> body)
+    stmt_ptr make_LoopStmt(const Location& location, std::vector<stmt_ptr> body)
     {
-        return std::make_unique<ast::LoopStmt>(location, std::move(body));
+        return std::make_unique<LoopStmt>(location, std::move(body));
     }
 
-    ast::stmt_ptr make_BreakStmt(const ast::Location& location)
+    stmt_ptr make_BreakStmt(const Location& location)
     {
-        return std::make_unique<ast::BreakStmt>(location);
+        return std::make_unique<BreakStmt>(location);
     }
 
-    ast::stmt_ptr make_ReturnStmt(const ast::Location& location,
-                                  ast::exp_ptr value)
+    stmt_ptr make_ReturnStmt(const Location& location, exp_ptr value)
     {
-        return std::make_unique<ast::ReturnStmt>(location, std::move(value));
+        return std::make_unique<ReturnStmt>(location, std::move(value));
     }
 
-    ast::stmt_ptr make_ReturnStmt(const ast::Location& location)
+    stmt_ptr make_ReturnStmt(const Location& location)
     {
-        return std::make_unique<ast::ReturnStmt>(location);
+        return std::make_unique<ReturnStmt>(location);
     }
 
-    ast::stmt_ptr make_ExpStmt(const ast::Location& location, ast::exp_ptr exp)
+    stmt_ptr make_ExpStmt(const Location& location, exp_ptr exp)
     {
-        return std::make_unique<ast::ExpStmt>(location, std::move(exp));
+        return std::make_unique<ExpStmt>(location, std::move(exp));
     }
 } // namespace parser

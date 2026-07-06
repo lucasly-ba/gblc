@@ -79,6 +79,16 @@ namespace parser
         return tokens_[pos_];
     }
 
+    TokenKind Parser::kind() const
+    {
+        return cur().kind;
+    }
+
+    std::string Parser::value() const
+    {
+        return cur().value;
+    }
+
     Token Parser::peek() const
     {
         return tokens_[pos_ + 1];
@@ -107,6 +117,31 @@ namespace parser
     void Parser::emit_error(const std::string& message)
     {
         errors_.push_back({ message, cur().value, cur().line, cur().col });
+    }
+
+    void Parser::synchronize()
+    {
+        while (!is_eof() && !is_token_start_dec(cur().kind))
+            walk();
+    }
+
+    bool Parser::emit_and_synchronize(const std::string& message)
+    {
+        emit_error(message);
+        synchronize();
+        return false;
+    }
+
+    dec_ptr Parser::fail(const std::string& message)
+    {
+        emit_error(message);
+        synchronize();
+        return nullptr;
+    }
+
+    Location Parser::get_location()
+    {
+        return Location{ cur().col, cur().line };
     }
 
 } // namespace parser
