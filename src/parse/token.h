@@ -12,6 +12,7 @@ namespace parser
         Requires,
         Scene,
         If,
+        Then,
         Else,
         Loop,
         Break,
@@ -45,12 +46,17 @@ namespace parser
         Leq,
         Geq,
 
+        // Bool
+        And,
+        Or,
+
         // Symbols
         LPar,
         RPar,
         LBrace,
         RBrace,
         Colon,
+        SemiColon,
         Arrow,
         Comma,
         Newline,
@@ -85,6 +91,7 @@ namespace parser
         { "requires", TokenKind::Requires },
         { "scene", TokenKind::Scene },
         { "if", TokenKind::If },
+        { "then", TokenKind::Then },
         { "else", TokenKind::Else },
         { "loop", TokenKind::Loop },
         { "break", TokenKind::Break },
@@ -132,6 +139,8 @@ namespace parser
             return "Scene";
         case TokenKind::If:
             return "If";
+        case TokenKind::Then:
+            return "Then";
         case TokenKind::Else:
             return "Else";
         case TokenKind::Loop:
@@ -184,6 +193,8 @@ namespace parser
             return "RPar";
         case TokenKind::Colon:
             return "Colon";
+        case TokenKind::SemiColon:
+            return "SemiColon";
         case TokenKind::Arrow:
             return "Arrow";
         case TokenKind::Comma:

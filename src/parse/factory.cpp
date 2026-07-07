@@ -8,42 +8,27 @@ namespace parser
 {
     using namespace ast;
 
-    dec_ptr make_VarDec(const Location& location, std::string name, Type type,
-                        exp_ptr init)
+    std::unique_ptr<VarDec> make_VarDec(const Location& location,
+                                        std::string name, Type type,
+                                        exp_ptr init)
     {
         return std::make_unique<VarDec>(location, std::move(name), type,
                                         std::move(init));
     }
 
-    dec_ptr make_VarDec(const Location& location, std::string name,
-                        exp_ptr init)
+    std::unique_ptr<VarDec> make_VarDec(const Location& location,
+                                        std::string name, exp_ptr init)
     {
         return std::make_unique<VarDec>(location, std::move(name),
                                         std::move(init));
     }
 
-    std::unique_ptr<ast::VarDec>
-    make_var_dec_typed(const ast::Location& location, std::string name,
-                       ast::Type type)
-    {
-        return std::make_unique<ast::VarDec>(location, std::move(name), type,
-                                             nullptr);
-    }
-
     dec_ptr make_FuncDec(const Location& location, std::string name,
-                         std::vector<std::unique_ptr<VarDec>> args, Type type,
-                         std::vector<stmt_ptr> body)
+                         std::vector<std::unique_ptr<VarDec>> args,
+                         std::optional<Type> type, std::vector<stmt_ptr> body)
     {
         return std::make_unique<FuncDec>(
             location, std::move(name), std::move(args), type, std::move(body));
-    }
-
-    dec_ptr make_FuncDec(const Location& location, std::string name,
-                         std::vector<std::unique_ptr<VarDec>> args,
-                         std::vector<stmt_ptr> body)
-    {
-        return std::make_unique<FuncDec>(location, std::move(name),
-                                         std::move(args), std::move(body));
     }
 
     dec_ptr make_SceneDec(const Location& location, std::string name,
@@ -152,11 +137,6 @@ namespace parser
     stmt_ptr make_ReturnStmt(const Location& location, exp_ptr value)
     {
         return std::make_unique<ReturnStmt>(location, std::move(value));
-    }
-
-    stmt_ptr make_ReturnStmt(const Location& location)
-    {
-        return std::make_unique<ReturnStmt>(location);
     }
 
     stmt_ptr make_ExpStmt(const Location& location, exp_ptr exp)

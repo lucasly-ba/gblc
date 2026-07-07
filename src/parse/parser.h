@@ -5,6 +5,8 @@
 #include <token.h>
 #include <vector>
 
+#include "fwd.h"
+
 namespace parser
 {
     using namespace ast;
@@ -25,29 +27,56 @@ namespace parser
         bool has_error() const;
 
     private:
-        dec_ptr parse_var_dec();
+        std::vector<dec_ptr> parse_dec();
+        // decs
+        std::unique_ptr<VarDec> parse_var_dec();
         bool parse_function_args(std::vector<std::unique_ptr<VarDec>>& args);
         dec_ptr parse_function_dec();
         dec_ptr parse_scene_dec();
         bool parse_player_field(std::set<TokenKind>& player_fields,
                                 TokenKind field, int& val, Location& loc,
                                 TokenKind lit);
-
         dec_ptr parse_player_dec();
+
+        // stmt
+        std::vector<stmt_ptr> parse_body();
+        stmt_ptr parse_stmt();
+        stmt_ptr parse_var_stmt();
+        stmt_ptr parse_if_stmt();
+        stmt_ptr parse_loop_stmt();
+        stmt_ptr parse_break_stmt();
+        stmt_ptr parse_return_stmt();
+        stmt_ptr parse_exp_stmt();
+
+        // exp
+        exp_ptr parse_exp();
+        exp_ptr parse_or_exp();
+        exp_ptr parse_and_exp();
+        exp_ptr parse_comparison_exp();
+        exp_ptr parse_additive_exp();
+        exp_ptr parse_multiplicative_exp();
+        exp_ptr parse_unary_exp();
+        exp_ptr parse_primary_exp();
+
+        // utils
         void walk();
-        Token cur() const;
+        const Token& cur() const;
         TokenKind kind() const;
-        std::string value() const;
-        Token peek() const;
+        const std::string& value() const;
         bool is_eof() const;
-        bool is_peek_eof() const;
         bool is_token_start_dec(TokenKind kind) const;
         void emit_error(const std::string& message);
         void synchronize();
+        void synchronize_stmt();
         bool emit_and_synchronize(const std::string& message);
-        dec_ptr fail(const std::string& message);
-        Location get_location();
+        dec_ptr fail_dec(const std::string& message);
+        std::unique_ptr<VarDec> fail_var_dec(const std::string& message);
+        stmt_ptr fail_stmt(const std::string& message);
+        exp_ptr fail_exp(const std::string& message);
 
+        Location get_location() const;
+
+        int parent_count_ = 0;
         bool trace_;
         size_t pos_ = 0;
         std::vector<Token> tokens_;

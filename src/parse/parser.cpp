@@ -6,50 +6,61 @@
 #include <token.h>
 #include <type.h>
 
+#include "fwd.h"
+
 namespace parser
 {
     using namespace ast;
 
     Parser::Parser(bool trace, std::vector<Token> tokens)
         : trace_(trace)
-        , tokens_(tokens)
+        , tokens_(std::move(tokens))
     {}
 
     Program Parser::parse_program()
     {
+        return Program(parse_dec());
+    }
+
+    std::vector<dec_ptr> Parser::parse_dec()
+    {
         std::vector<dec_ptr> decs{};
         while (!is_eof())
         {
+            dec_ptr dec;
             switch (cur().kind)
             {
             case TokenKind::Var:
-                decs.push_back(parse_var_dec());
+                dec = parse_var_dec();
                 break;
             case TokenKind::Function:
-                decs.push_back(parse_function_dec());
+                dec = parse_function_dec();
                 break;
             case TokenKind::Scene:
-                decs.push_back(parse_scene_dec());
+                dec = parse_scene_dec();
                 break;
             case TokenKind::Player:
-                decs.push_back(parse_player_dec());
+                dec = parse_player_dec();
                 break;
             default:
                 emit_error("Only declarations are allowed in top level");
                 walk();
+                continue;
             }
+            if (dec)
+                decs.push_back(std::move(dec));
         }
-        return Program(std::move(decs));
+        return decs;
     }
 
-    dec_ptr Parser::parse_var_dec()
+    std::unique_ptr<VarDec> Parser::parse_var_dec()
     {
         Location location = get_location();
         walk();
         std::string name;
         std::optional<Type> type = std::nullopt;
         if (kind() != TokenKind::ID)
-            return fail("Expected name after `var`");
+            return fail_var_dec("Expected name after `var`");
         name = value();
         walk();
         if (kind() == TokenKind::Colon)
@@ -57,20 +68,25 @@ namespace parser
             walk();
             type = get_type(value());
             if (!type.has_value())
-                return fail("Unexpected type name");
+                return fail_var_dec("Unexpected type name");
             walk();
         }
         if (kind() == TokenKind::Eq)
         {
             walk();
             exp_ptr init = parse_exp();
+            if (kind() != TokenKind::SemiColon)
+                return fail_var_dec(
+                    "Expected semi colon after var declaration");
+            walk();
+
             if (type.has_value())
                 return make_VarDec(location, std::move(name), *type,
                                    std::move(init));
             return make_VarDec(location, std::move(name), std::move(init));
         }
         else
-            return fail("expected ':' or '=' after var name");
+            return fail_var_dec("expected ':' or '=' after var name");
     }
 
     bool Parser::parse_function_args(std::vector<std::unique_ptr<VarDec>>& args)
@@ -92,7 +108,7 @@ namespace parser
             auto type = get_type(value());
             if (!type.has_value())
                 return emit_and_synchronize("Unexpected type name");
-            args.push_back(make_var_dec_typed(loc, name, *type));
+            args.push_back(make_VarDec(loc, name, *type, nullptr));
             walk();
             if (kind() == TokenKind::Comma)
                 walk();
@@ -115,7 +131,7 @@ namespace parser
         std::vector<ast::stmt_ptr> body;
 
         if (kind() != TokenKind::ID)
-            return fail("Expected name after `fn`");
+            return fail_dec("Expected name after `fn`");
         name = value();
         walk();
         if (parse_function_args(args) == false)
@@ -125,24 +141,58 @@ namespace parser
             walk();
             type = get_type(value());
             if (!type.has_value())
-                return fail("Unexpected type name");
+                return fail_dec("Unexpected type name");
             walk();
         }
         if (kind() != TokenKind::LBrace)
-            return fail("Expected left bracket in function declaration");
+            return fail_dec("Expected left bracket in function declaration");
         walk();
         body = parse_body();
 
         if (kind() != TokenKind::RBrace)
-            return fail("Expected right bracket in function declaration");
-        if (type.has_value())
-            return make_FuncDec(location, name, std::move(args), *type,
-                                std::move(body));
-        return make_FuncDec(location, name, std::move(args), std::move(body));
+            return fail_dec("Expected right bracket in function declaration");
+
+        walk();
+        return make_FuncDec(location, std::move(name), std::move(args), type,
+                            std::move(body));
     }
 
     dec_ptr Parser::parse_scene_dec()
-    {}
+    {
+        Location location = get_location();
+        walk();
+        std::string name;
+        std::optional<int> max_players = std::nullopt;
+        exp_ptr precondition = nullptr;
+        std::vector<ast::stmt_ptr> body;
+
+        if (kind() != TokenKind::ID)
+            return fail_dec("Expected name after `scene`");
+        name = value();
+        walk();
+        if (kind() == TokenKind::Max)
+        {
+            walk();
+            if (kind() != TokenKind::IntLit)
+                return fail_dec("Expected integer after max");
+            max_players = std::stoi(value());
+            walk();
+        }
+        if (kind() == TokenKind::Requires)
+        {
+            walk();
+            precondition = parse_exp();
+        }
+        if (kind() != TokenKind::LBrace)
+            return fail_dec("Expected left bracket in scene declaration");
+        walk();
+        body = parse_body();
+        if (kind() != TokenKind::RBrace)
+            return fail_dec("Expected right bracket in function declaration");
+        walk();
+        return make_SceneDec(location, std::move(name), max_players,
+                             std::move(precondition), std::move(body));
+    }
 
     bool Parser::parse_player_field(std::set<TokenKind>& player_fields,
                                     TokenKind field, int& val, Location& loc,
@@ -175,11 +225,11 @@ namespace parser
         Location reputation_location;
 
         if (kind() != TokenKind::ID)
-            return fail("Expected name after `player`");
+            return fail_dec("Expected name after `player`");
         name = value();
         walk();
         if (kind() != TokenKind::LBrace)
-            return fail("Expected left bracket after player name");
+            return fail_dec("Expected left bracket after player name");
         walk();
         std::set player_fields{ TokenKind::Dollars, TokenKind::Chance,
                                 TokenKind::Reputation };
@@ -207,25 +257,328 @@ namespace parser
                     return nullptr;
                 break;
             default:
-                return fail("Unrecognized field");
+                return fail_dec("Unrecognized field");
             }
             walk();
             if (!player_fields.empty())
             {
                 if (kind() != TokenKind::Comma)
-                    return fail("Expected comma after field");
+                    return fail_dec("Expected comma after field");
                 walk();
             }
         }
 
         if (kind() != TokenKind::RBrace)
-            return fail("Expected right bracket after player fields");
+            return fail_dec("Expected right bracket after player fields");
         walk();
         return make_PlayerDec(
             location, std::move(name),
             make_DollarsExp(dollars_location, dollars),
             make_ChanceExp(chance_location, chance),
             make_ReputationExp(reputation_location, reputation));
+    }
+
+    std::vector<stmt_ptr> Parser::parse_body()
+    {
+        std::vector<stmt_ptr> stmts;
+        while (!is_eof() && kind() != TokenKind::RBrace)
+        {
+            stmt_ptr stmt = parse_stmt();
+            if (stmt)
+                stmts.push_back(std::move(stmt));
+        }
+        return stmts;
+    }
+
+    stmt_ptr Parser::parse_stmt()
+    {
+        switch (cur().kind)
+        {
+        case TokenKind::Var:
+            return parse_var_stmt();
+        case TokenKind::If:
+            return parse_if_stmt();
+        case TokenKind::Loop:
+            return parse_loop_stmt();
+        case TokenKind::Break:
+            return parse_break_stmt();
+        case TokenKind::Return:
+            return parse_return_stmt();
+        default:
+            return parse_exp_stmt();
+        }
+    }
+
+    stmt_ptr Parser::parse_var_stmt()
+    {
+        Location location = get_location();
+        std::unique_ptr<VarDec> vardec = parse_var_dec();
+        if (!vardec)
+            return nullptr;
+        return make_VarStmt(location, std::move(vardec));
+    }
+
+    stmt_ptr Parser::parse_if_stmt()
+    {
+        Location location = get_location();
+        walk();
+        exp_ptr condition = parse_exp();
+
+        if (kind() != TokenKind::Then)
+            return fail_stmt("Expected then branch after if condition");
+        walk();
+        if (kind() != TokenKind::LBrace)
+            return fail_stmt("Expected left bracket before then branch");
+        walk();
+        std::vector<stmt_ptr> then_branch = parse_body();
+        if (kind() != TokenKind::RBrace)
+            return fail_stmt("Expected right bracket after then branch");
+        walk();
+        if (kind() == TokenKind::Else)
+        {
+            walk();
+            if (kind() != TokenKind::LBrace)
+                return fail_stmt("Expected left bracket after else branch");
+            walk();
+            auto else_branch = parse_body();
+            if (kind() != TokenKind::RBrace)
+                return fail_stmt("Expected right bracket after else branch");
+            walk();
+            return make_IfStmt(location, std::move(condition),
+                               std::move(then_branch), std::move(else_branch));
+        }
+        return make_IfStmt(location, std::move(condition),
+                           std::move(then_branch));
+    }
+
+    stmt_ptr Parser::parse_loop_stmt()
+    {
+        Location location = get_location();
+        walk();
+
+        if (kind() != TokenKind::LBrace)
+            return fail_stmt("Expected left bracket after loop");
+        walk();
+        auto loop_body = parse_body();
+        if (kind() != TokenKind::RBrace)
+            return fail_stmt("Expected right bracket after loop");
+        walk();
+        return make_LoopStmt(location, std::move(loop_body));
+    }
+
+    stmt_ptr Parser::parse_break_stmt()
+    {
+        Location location = get_location();
+        walk();
+
+        if (kind() != TokenKind::SemiColon)
+            return fail_stmt("Expected semicolon after break");
+        walk();
+        return make_BreakStmt(location);
+    }
+
+    stmt_ptr Parser::parse_return_stmt()
+    {
+        Location location = get_location();
+        walk();
+        exp_ptr value = parse_exp();
+
+        if (kind() != TokenKind::SemiColon)
+            return fail_stmt("Expected semicolon after return");
+        walk();
+        return make_ReturnStmt(location, std::move(value));
+    }
+
+    stmt_ptr Parser::parse_exp_stmt()
+    {
+        auto exp_stmt = make_ExpStmt(get_location(), parse_exp());
+        if (kind() != TokenKind::SemiColon)
+            return fail_stmt("Expected semicolon after exp");
+        walk();
+        return exp_stmt;
+    }
+
+    exp_ptr Parser::parse_exp()
+    {
+        return parse_or_exp();
+    }
+
+    exp_ptr Parser::parse_or_exp()
+    {
+        auto left = parse_and_exp();
+        while (kind() == TokenKind::Or)
+        {
+            Location location = get_location();
+            walk();
+            auto right = parse_and_exp();
+            left = make_OpExp(location, std::move(left), OpExp::Oper::OR,
+                              std::move(right));
+        }
+        return left;
+    }
+
+    exp_ptr Parser::parse_and_exp()
+    {
+        auto left = parse_comparison_exp();
+        while (kind() == TokenKind::And)
+        {
+            Location location = get_location();
+            walk();
+            auto right = parse_comparison_exp();
+            left = make_OpExp(location, std::move(left), OpExp::Oper::AND,
+                              std::move(right));
+        }
+        return left;
+    }
+
+    exp_ptr Parser::parse_comparison_exp()
+    {
+        auto left = parse_additive_exp();
+        while (kind() == TokenKind::EqEq || kind() == TokenKind::Neq
+               || kind() == TokenKind::Lt || kind() == TokenKind::Leq
+               || kind() == TokenKind::Gt || kind() == TokenKind::Geq)
+        {
+            Location location = get_location();
+            OpExp::Oper op;
+            switch (kind())
+            {
+            case TokenKind::EqEq:
+                op = OpExp::Oper::EQ;
+                break;
+            case TokenKind::Neq:
+                op = OpExp::Oper::NE;
+                break;
+            case TokenKind::Lt:
+                op = OpExp::Oper::LT;
+                break;
+            case TokenKind::Leq:
+                op = OpExp::Oper::LE;
+                break;
+            case TokenKind::Gt:
+                op = OpExp::Oper::GT;
+                break;
+            case TokenKind::Geq:
+                op = OpExp::Oper::GE;
+                break;
+            default:
+                op = OpExp::Oper::NONE;
+                break;
+            }
+            walk();
+            auto right = parse_additive_exp();
+            left = make_OpExp(location, std::move(left), op, std::move(right));
+        }
+        return left;
+    }
+
+    exp_ptr Parser::parse_additive_exp()
+    {
+        auto left = parse_multiplicative_exp();
+        while (kind() == TokenKind::Plus || kind() == TokenKind::Minus)
+        {
+            Location location = get_location();
+            OpExp::Oper op = (kind() == TokenKind::Plus) ? OpExp::Oper::ADD
+                                                         : OpExp::Oper::SUB;
+            walk();
+            auto right = parse_multiplicative_exp();
+            left = make_OpExp(location, std::move(left), op, std::move(right));
+        }
+        return left;
+    }
+
+    exp_ptr Parser::parse_multiplicative_exp()
+    {
+        auto left = parse_primary_exp();
+        while (kind() == TokenKind::Mul || kind() == TokenKind::Div)
+        {
+            Location location = get_location();
+            OpExp::Oper op = (kind() == TokenKind::Mul) ? OpExp::Oper::MUL
+                                                        : OpExp::Oper::DIV;
+            walk();
+            auto right = parse_primary_exp();
+            left = make_OpExp(location, std::move(left), op, std::move(right));
+        }
+        return left;
+    }
+
+    exp_ptr Parser::parse_primary_exp()
+    {
+        Location location = get_location();
+
+        switch (kind())
+        {
+        case TokenKind::IntLit: {
+            int val = std::stoi(value());
+            walk();
+            return make_IntExp(location, val);
+        }
+        case TokenKind::FloatLit: {
+            float val = std::stof(value());
+            walk();
+            return make_FloatExp(location, val);
+        }
+        case TokenKind::StringLit: {
+            std::string val = value();
+            walk();
+            return make_StringExp(location, std::move(val));
+        }
+        case TokenKind::BoolLit: {
+            bool val = (value() == "true");
+            walk();
+            return make_BoolExp(location, val);
+        }
+        case TokenKind::DollarsLit: {
+            int val = std::stoi(value().substr(0, value().size() - 1));
+            walk();
+            return make_DollarsExp(location, val);
+        }
+        case TokenKind::ChanceLit: {
+            int val = std::stoi(value().substr(0, value().size() - 1));
+            walk();
+            return make_ChanceExp(location, val);
+        }
+        case TokenKind::ReputationLit: {
+            int val = std::stoi(value());
+            walk();
+            return make_ReputationExp(location, val);
+        }
+        case TokenKind::ID: {
+            std::string name = value();
+            walk();
+            if (kind() == TokenKind::LPar)
+            {
+                walk();
+                std::vector<exp_ptr> args;
+                while (!is_eof() && kind() != TokenKind::RPar)
+                {
+                    args.push_back(parse_exp());
+                    if (kind() == TokenKind::Comma)
+                        walk();
+                    else if (kind() != TokenKind::RPar)
+                        return fail_exp(
+                            "Expected ',' or ')' in call arguments");
+                }
+                if (kind() != TokenKind::RPar)
+                    return fail_exp("Expected ')' after call arguments");
+                walk();
+                return make_CallExp(location, std::move(name), std::move(args));
+            }
+            return make_IdentExp(location, std::move(name));
+        }
+
+        case TokenKind::LPar: {
+            walk();
+            parent_count_++;
+            exp_ptr inner = parse_exp();
+            parent_count_--;
+            if (kind() != TokenKind::RPar)
+                return fail_exp("Expected ')' after expression");
+            walk();
+            return inner;
+        }
+        default:
+            return fail_exp("Expected an expression");
+        }
     }
 
 } // namespace parser

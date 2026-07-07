@@ -35,6 +35,13 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    parser::Parser(parse_trace, tokens);
-    auto program = parse_program();
+    parser::Parser parser(parse_trace, tokens);
+    auto program = parser.parse_program();
+    if (parser.has_error())
+    {
+        for (auto& err : parser.get_errors())
+            std::cerr << "error: " << err.message << " at " << err.line << ":"
+                      << err.col << "\n";
+        return 2;
+    }
 }

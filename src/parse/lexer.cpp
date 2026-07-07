@@ -17,21 +17,12 @@ namespace parser
     {
         std::vector<Token> tokens{};
         Token tok = lex_token();
-        bool skip_newline = false;
         while (tok.kind != TokenKind::Eof)
         {
-            if (tok.kind == TokenKind::Newline)
-                skip_newline = true;
-            if (tok.kind != TokenKind::Comment && tok.kind != TokenKind::Error)
+            if (tok.kind != TokenKind::Comment && tok.kind != TokenKind::Error
+                && tok.kind != TokenKind::Newline)
                 tokens.push_back(tok);
             tok = lex_token();
-            // Avoid having multiple newlines in a row
-            if (skip_newline)
-            {
-                while (tok.kind == TokenKind::Newline)
-                    tok = lex_token();
-                skip_newline = false;
-            }
         }
         tokens.push_back(tok);
         if (trace_)
@@ -65,6 +56,8 @@ namespace parser
             return lex_symbol_token(TokenKind::RBrace);
         case ':':
             return lex_symbol_token(TokenKind::Colon);
+        case ';':
+            return lex_symbol_token(TokenKind::SemiColon);
         case ',':
             return lex_symbol_token(TokenKind::Comma);
         case '=':
@@ -99,6 +92,27 @@ namespace parser
             if (!is_peek_eof() && peek() == '>')
                 return lex_double_symbol_token(TokenKind::Arrow);
             return lex_symbol_token(TokenKind::Minus);
+        case '&':
+            if (!is_peek_eof() && peek() == '&')
+                return lex_double_symbol_token(TokenKind::And);
+            if (is_peek_eof())
+            {
+                emit_error("Unexpected end of file");
+                return lex_eof_token();
+            }
+            return lex_error_token(
+                std::format("Unexpected character: {}", cur()));
+        case '|':
+            if (!is_peek_eof() && peek() == '|')
+                return lex_double_symbol_token(TokenKind::Or);
+            if (is_peek_eof())
+            {
+                emit_error("Unexpected end of file");
+                return lex_eof_token();
+            }
+            return lex_error_token(
+                std::format("Unexpected character: {}", cur()));
+
         default:
             if (std::isdigit(cur()))
                 return lex_number_token();

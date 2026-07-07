@@ -42,12 +42,8 @@ namespace ast
     {
     public:
         FuncDec(const Location& location, std::string name,
-                std::vector<std::unique_ptr<VarDec>> args, Type type,
-                std::vector<stmt_ptr> body);
-        FuncDec(const Location& location, std::string name,
                 std::vector<std::unique_ptr<VarDec>> args,
-                std::vector<stmt_ptr> body);
-
+                std::optional<Type> type, std::vector<stmt_ptr> body);
         void accept(Visitor& v) override;
 
         const std::vector<std::unique_ptr<VarDec>>& args_get() const;
@@ -72,15 +68,6 @@ namespace ast
     public:
         SceneDec(const Location& location, std::string name,
                  std::optional<int> max_players, exp_ptr precondition,
-                 std::vector<stmt_ptr> body);
-
-        SceneDec(const Location& location, std::string name,
-                 exp_ptr precondition, std::vector<stmt_ptr> body);
-
-        SceneDec(const Location& location, std::string name,
-                 std::optional<int> max_players, std::vector<stmt_ptr> body);
-
-        SceneDec(const Location& location, std::string name,
                  std::vector<stmt_ptr> body);
 
         void accept(Visitor& v) override;

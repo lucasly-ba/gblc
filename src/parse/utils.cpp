@@ -1,6 +1,8 @@
 #include <lexer.h>
 #include <parser.h>
 
+#include "token.h"
+
 /// Lexer
 namespace parser
 {
@@ -74,7 +76,7 @@ namespace parser
         pos_++;
     }
 
-    Token Parser::cur() const
+    const Token& Parser::cur() const
     {
         return tokens_[pos_];
     }
@@ -84,14 +86,15 @@ namespace parser
         return cur().kind;
     }
 
-    std::string Parser::value() const
+    bool Parser::is_token_start_dec(TokenKind kind) const
     {
-        return cur().value;
+        return kind == TokenKind::Var || kind == TokenKind::Function
+            || kind == TokenKind::Scene || kind == TokenKind::Player;
     }
 
-    Token Parser::peek() const
+    const std::string& Parser::value() const
     {
-        return tokens_[pos_ + 1];
+        return cur().value;
     }
 
     const std::vector<ParseError>& Parser::get_errors() const
@@ -109,11 +112,6 @@ namespace parser
         return pos_ >= tokens_.size();
     }
 
-    bool Parser::is_peek_eof() const
-    {
-        return pos_ + 1 >= tokens_.size();
-    }
-
     void Parser::emit_error(const std::string& message)
     {
         errors_.push_back({ message, cur().value, cur().line, cur().col });
@@ -125,6 +123,15 @@ namespace parser
             walk();
     }
 
+    void Parser::synchronize_stmt()
+    {
+        while (!is_eof() && kind() != TokenKind::RBrace
+               && kind() != TokenKind::Var && kind() != TokenKind::If
+               && kind() != TokenKind::Loop && kind() != TokenKind::Break
+               && kind() != TokenKind::Return)
+            walk();
+    }
+
     bool Parser::emit_and_synchronize(const std::string& message)
     {
         emit_error(message);
@@ -132,14 +139,35 @@ namespace parser
         return false;
     }
 
-    dec_ptr Parser::fail(const std::string& message)
+    dec_ptr Parser::fail_dec(const std::string& message)
     {
         emit_error(message);
         synchronize();
         return nullptr;
     }
 
-    Location Parser::get_location()
+    std::unique_ptr<VarDec> Parser::fail_var_dec(const std::string& message)
+    {
+        emit_error(message);
+        synchronize();
+        return nullptr;
+    }
+
+    stmt_ptr Parser::fail_stmt(const std::string& message)
+    {
+        emit_error(message);
+        synchronize_stmt();
+        return nullptr;
+    }
+
+    exp_ptr Parser::fail_exp(const std::string& message)
+    {
+        emit_error(message);
+        synchronize_stmt();
+        return nullptr;
+    }
+
+    Location Parser::get_location() const
     {
         return Location{ cur().col, cur().line };
     }

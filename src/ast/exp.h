@@ -16,16 +16,19 @@ namespace ast
     public:
         enum class Oper
         {
-            add,
-            sub,
-            mul,
-            div,
-            eq,
-            ne,
-            lt,
-            le,
-            gt,
-            ge
+            ADD,
+            SUB,
+            MUL,
+            DIV,
+            EQ,
+            NE,
+            LT,
+            LE,
+            GT,
+            GE,
+            AND,
+            OR,
+            NONE,
         };
         OpExp(const Location& location, exp_ptr left, Oper oper, exp_ptr right);
 

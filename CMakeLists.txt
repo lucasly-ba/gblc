@@ -30,7 +30,6 @@ set(SOURCES
     src/ast/exp.cpp
     src/ast/stmt.cpp
     src/ast/type.cpp
-    src/ast/pattern.cpp
     src/ast/default-visitor.cpp
     src/parse/lexer.cpp
     src/parse/parser.cpp

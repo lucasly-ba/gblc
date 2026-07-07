@@ -60,20 +60,11 @@ namespace ast
     }
 
     FuncDec::FuncDec(const Location& location, std::string name,
-                     std::vector<std::unique_ptr<VarDec>> args, Type type,
-                     std::vector<stmt_ptr> body)
+                     std::vector<std::unique_ptr<VarDec>> args,
+                     std::optional<Type> type, std::vector<stmt_ptr> body)
         : Dec(location, std::move(name))
         , args_(std::move(args))
         , type_(type)
-        , body_(std::move(body))
-    {}
-
-    FuncDec::FuncDec(const Location& location, std::string name,
-                     std::vector<std::unique_ptr<VarDec>> args,
-                     std::vector<stmt_ptr> body)
-        : Dec(location, std::move(name))
-        , args_(std::move(args))
-        , type_(std::nullopt)
         , body_(std::move(body))
     {}
 
@@ -128,31 +119,6 @@ namespace ast
         : Dec(location, std::move(name))
         , max_players_(max_players)
         , precondition_(std::move(precondition))
-        , body_(std::move(body))
-    {}
-
-    SceneDec::SceneDec(const Location& location, std::string name,
-                       exp_ptr precondition, std::vector<stmt_ptr> body)
-        : Dec(location, std::move(name))
-        , max_players_(std::nullopt)
-        , precondition_(std::move(precondition))
-        , body_(std::move(body))
-    {}
-
-    SceneDec::SceneDec(const Location& location, std::string name,
-                       std::optional<int> max_players,
-                       std::vector<stmt_ptr> body)
-        : Dec(location, std::move(name))
-        , max_players_(max_players)
-        , precondition_(nullptr)
-        , body_(std::move(body))
-    {}
-
-    SceneDec::SceneDec(const Location& location, std::string name,
-                       std::vector<stmt_ptr> body)
-        : Dec(location, std::move(name))
-        , max_players_(std::nullopt)
-        , precondition_(nullptr)
         , body_(std::move(body))
     {}
 
