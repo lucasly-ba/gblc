@@ -30,13 +30,14 @@ set(SOURCES
     src/ast/exp.cpp
     src/ast/stmt.cpp
     src/ast/type.cpp
-    src/ast/default-visitor.cpp
+    src/ast/print-ast.cpp
+    src/ast/main-visitor.cpp
     src/parse/lexer.cpp
     src/parse/parser.cpp
     src/parse/utils.cpp
     src/parse/factory.cpp
     src/bind/binder.cpp
-    src/type/type_checker.cpp
+    src/type/type-checker.cpp
     src/llvm/codegen.cpp
 )
 
