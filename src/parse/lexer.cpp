@@ -8,7 +8,7 @@
 namespace parser
 {
     Lexer::Lexer(bool trace, std::string content)
-        : content_(content)
+        : content_(std::move(content))
         , trace_(trace)
     {}
 
