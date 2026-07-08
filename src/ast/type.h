@@ -10,9 +10,9 @@ namespace ast
         Float,
         String,
         Bool,
-        Dollar,
+        Dollars,
         Chance,
-        Reputation,
+        Streak,
     };
 
     std::optional<Type> get_type(const std::string& value);

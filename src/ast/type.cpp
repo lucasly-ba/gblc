@@ -14,12 +14,12 @@ namespace ast
             return Type::String;
         if (value == "bool")
             return Type::Bool;
-        if (value == "dollar")
-            return Type::Dollar;
+        if (value == "dollars")
+            return Type::Dollars;
         if (value == "chance")
             return Type::Chance;
-        if (value == "reputation")
-            return Type::Reputation;
+        if (value == "streak")
+            return Type::Streak;
         return std::nullopt;
     }
     std::string to_string(Type type)
@@ -34,12 +34,12 @@ namespace ast
             return "string";
         case Type::Bool:
             return "bool";
-        case Type::Dollar:
-            return "dollar";
+        case Type::Dollars:
+            return "dollars";
         case Type::Chance:
             return "chance";
-        case Type::Reputation:
-            return "reputation";
+        case Type::Streak:
+            return "streak";
         default:
             return "unknown";
         }

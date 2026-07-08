@@ -148,11 +148,11 @@ namespace ast
         v.visit(*this);
     }
 
-    ReputationExp::ReputationExp(const Location& location, int value)
+    StreakExp::StreakExp(const Location& location, int value)
         : IntExp(location, value)
     {}
 
-    void ReputationExp::accept(Visitor& v)
+    void StreakExp::accept(Visitor& v)
     {
         v.visit(*this);
     }

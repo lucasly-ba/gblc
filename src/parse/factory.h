@@ -27,7 +27,7 @@ namespace parser
                                std::vector<ast::stmt_ptr> body);
 
     dec_ptr make_PlayerDec(const Location& location, std::string name,
-                           exp_ptr dollars, exp_ptr chance, exp_ptr reputation);
+                           exp_ptr dollars, exp_ptr chance, exp_ptr streak);
 
     exp_ptr make_OpExp(const Location& location, exp_ptr left, OpExp::Oper oper,
                        exp_ptr right);
@@ -41,7 +41,7 @@ namespace parser
     exp_ptr make_BoolExp(const Location& location, bool value);
     exp_ptr make_DollarsExp(const Location& location, int value);
     exp_ptr make_ChanceExp(const Location& location, int value);
-    exp_ptr make_ReputationExp(const Location& location, int value);
+    exp_ptr make_StreakExp(const Location& location, int value);
 
     exp_ptr make_CallExp(const Location& location, std::string name,
                          std::vector<exp_ptr> args);

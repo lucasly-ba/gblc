@@ -49,6 +49,11 @@ namespace ast
         type_ = type;
     }
 
+    bool VarDec::has_type() const
+    {
+        return type_.has_value();
+    }
+
     Exp* VarDec::init_get() const
     {
         return init_.get();
@@ -98,6 +103,11 @@ namespace ast
         type_ = type;
     }
 
+    bool FuncDec::has_type() const
+    {
+        return type_.has_value();
+    }
+
     const std::vector<stmt_ptr>& FuncDec::body_get() const
     {
         return body_;
@@ -137,6 +147,11 @@ namespace ast
         max_players_ = max_players;
     }
 
+    bool SceneDec::has_max_players() const
+    {
+        return max_players_.has_value();
+    }
+
     Exp* SceneDec::precondition_get() const
     {
         return precondition_.get();
@@ -163,11 +178,11 @@ namespace ast
     }
 
     PlayerDec::PlayerDec(const Location& location, std::string name,
-                         exp_ptr dollar, exp_ptr chance, exp_ptr reputation)
+                         exp_ptr dollar, exp_ptr chance, exp_ptr streak)
         : Dec(location, std::move(name))
         , dollar_(std::move(dollar))
         , chance_(std::move(chance))
-        , reputation_(std::move(reputation))
+        , streak_(std::move(streak))
     {}
 
     void PlayerDec::accept(Visitor& v)
@@ -195,13 +210,13 @@ namespace ast
         chance_ = std::move(chance);
     }
 
-    Exp& PlayerDec::reputation_get() const
+    Exp& PlayerDec::streak_get() const
     {
-        return *reputation_;
+        return *streak_;
     }
 
-    void PlayerDec::reputation_set(exp_ptr reputation)
+    void PlayerDec::streak_set(exp_ptr streak)
     {
-        reputation_ = std::move(reputation);
+        streak_ = std::move(streak);
     }
 } // namespace ast

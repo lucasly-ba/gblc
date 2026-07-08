@@ -76,7 +76,6 @@ namespace parser
 
         Location get_location() const;
 
-        int parent_count_ = 0;
         bool trace_;
         size_t pos_ = 0;
         std::vector<Token> tokens_;

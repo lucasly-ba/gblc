@@ -132,10 +132,9 @@ namespace parser
             val += cur();
             walk();
         }
-        if (cur() == '$' || cur() == '%' || cur() == '*')
+        if (cur() == '$' || cur() == '%' || cur() == 'x')
         {
             auto c = cur();
-            val += c;
             if (c == '%' && std::atoi(val.c_str()) > 100)
                 return lex_error_token(
                     "Chance value should be between 0 and 100, actual value: "
@@ -236,7 +235,7 @@ namespace parser
     Token Lexer::lex_error_token(const std::string& message)
     {
         walk();
-        errors_.push_back({ message, line_, col_ });
+        errors_.push_back({ message, line_ + 1, col_ });
         return create_token(TokenKind::Error);
     }
 

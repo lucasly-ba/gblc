@@ -1,8 +1,12 @@
 #include <ast.h>
-#include <ast/dec.h>
+#include <ast/all.h>
 
 namespace ast
 {
+
+    Ast::Ast(const Location& location)
+        : location_(location)
+    {}
 
     const Location& Ast::location_get() const
     {
@@ -13,6 +17,12 @@ namespace ast
     {
         location_ = location;
     }
+
+    Program::Program(std::vector<dec_ptr> decs)
+        : decs_(std::move(decs))
+    {}
+
+    Program::~Program() = default;
 
     const std::vector<dec_ptr>& Program::decs_get() const
     {

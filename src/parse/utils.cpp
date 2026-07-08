@@ -1,3 +1,5 @@
+#include <ast/all.h>
+#include <cstdio>
 #include <lexer.h>
 #include <parser.h>
 
@@ -38,7 +40,7 @@ namespace parser
 
     Token Lexer::create_token(TokenKind kind, const std::string& value)
     {
-        return Token{ kind, value, line_, col_ };
+        return Token{ kind, value, line_ + 1, col_ };
     }
 
     const std::vector<LexError>& Lexer::get_errors() const
@@ -63,7 +65,7 @@ namespace parser
 
     void Lexer::emit_error(const std::string& message)
     {
-        errors_.push_back({ message, line_, col_ });
+        errors_.push_back({ message, line_ + 1, col_ });
     }
 } // namespace parser
 
@@ -109,7 +111,7 @@ namespace parser
 
     bool Parser::is_eof() const
     {
-        return pos_ >= tokens_.size();
+        return cur().kind == TokenKind::Eof;
     }
 
     void Parser::emit_error(const std::string& message)

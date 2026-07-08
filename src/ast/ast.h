@@ -34,6 +34,7 @@ namespace ast
     {
     public:
         explicit Program(std::vector<dec_ptr> decs);
+        ~Program();
 
         const std::vector<dec_ptr>& decs_get() const;
         std::vector<dec_ptr>& decs_get();

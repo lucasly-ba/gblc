@@ -5,7 +5,10 @@
 #include <set>
 #include <token.h>
 #include <type.h>
+#include <utility>
 
+#include "ast.h"
+#include "exp.h"
 #include "fwd.h"
 
 namespace parser
@@ -116,6 +119,8 @@ namespace parser
                 return emit_and_synchronize(
                     "Expected ',' or ')' after parameter");
         }
+        if (kind() != TokenKind::RPar)
+            return emit_and_synchronize("Expected  ')' after parameter");
         walk();
 
         return true;
@@ -207,7 +212,7 @@ namespace parser
         if (kind() != lit)
             return emit_and_synchronize("Expected value after field");
         loc = get_location();
-        val = std::stoi(value().substr(0, value().size() - 1));
+        val = std::stoi(value());
         player_fields.erase(field);
         return true;
     }
@@ -219,10 +224,10 @@ namespace parser
         std::string name;
         int dollars;
         int chance;
-        int reputation;
+        int streak;
         Location dollars_location;
         Location chance_location;
-        Location reputation_location;
+        Location streak_location;
 
         if (kind() != TokenKind::ID)
             return fail_dec("Expected name after `player`");
@@ -232,7 +237,7 @@ namespace parser
             return fail_dec("Expected left bracket after player name");
         walk();
         std::set player_fields{ TokenKind::Dollars, TokenKind::Chance,
-                                TokenKind::Reputation };
+                                TokenKind::Streak };
 
         while (!player_fields.empty())
         {
@@ -250,10 +255,9 @@ namespace parser
                                         chance_location, TokenKind::ChanceLit))
                     return nullptr;
                 break;
-            case TokenKind::Reputation:
-                if (!parse_player_field(player_fields, field, reputation,
-                                        reputation_location,
-                                        TokenKind::ReputationLit))
+            case TokenKind::Streak:
+                if (!parse_player_field(player_fields, field, streak,
+                                        streak_location, TokenKind::StreakLit))
                     return nullptr;
                 break;
             default:
@@ -271,11 +275,10 @@ namespace parser
         if (kind() != TokenKind::RBrace)
             return fail_dec("Expected right bracket after player fields");
         walk();
-        return make_PlayerDec(
-            location, std::move(name),
-            make_DollarsExp(dollars_location, dollars),
-            make_ChanceExp(chance_location, chance),
-            make_ReputationExp(reputation_location, reputation));
+        return make_PlayerDec(location, std::move(name),
+                              make_DollarsExp(dollars_location, dollars),
+                              make_ChanceExp(chance_location, chance),
+                              make_StreakExp(streak_location, streak));
     }
 
     std::vector<stmt_ptr> Parser::parse_body()
@@ -324,9 +327,6 @@ namespace parser
         walk();
         exp_ptr condition = parse_exp();
 
-        if (kind() != TokenKind::Then)
-            return fail_stmt("Expected then branch after if condition");
-        walk();
         if (kind() != TokenKind::LBrace)
             return fail_stmt("Expected left bracket before then branch");
         walk();
@@ -408,10 +408,10 @@ namespace parser
         auto left = parse_and_exp();
         while (kind() == TokenKind::Or)
         {
-            Location location = get_location();
+            auto location = get_location();
             walk();
             auto right = parse_and_exp();
-            left = make_OpExp(location, std::move(left), OpExp::Oper::OR,
+            left = make_OpExp(location, std::move(left), ast::OpExp::Oper::OR,
                               std::move(right));
         }
         return left;
@@ -422,10 +422,10 @@ namespace parser
         auto left = parse_comparison_exp();
         while (kind() == TokenKind::And)
         {
-            Location location = get_location();
+            auto location = get_location();
             walk();
             auto right = parse_comparison_exp();
-            left = make_OpExp(location, std::move(left), OpExp::Oper::AND,
+            left = make_OpExp(location, std::move(left), ast::OpExp::Oper::AND,
                               std::move(right));
         }
         return left;
@@ -434,36 +434,36 @@ namespace parser
     exp_ptr Parser::parse_comparison_exp()
     {
         auto left = parse_additive_exp();
-        while (kind() == TokenKind::EqEq || kind() == TokenKind::Neq
-               || kind() == TokenKind::Lt || kind() == TokenKind::Leq
-               || kind() == TokenKind::Gt || kind() == TokenKind::Geq)
+        while (kind() == TokenKind::EqEq || kind() == TokenKind::Lt
+               || kind() == TokenKind::Leq || kind() == TokenKind::Gt
+               || kind() == TokenKind::Geq || kind() == TokenKind::Neq)
         {
-            Location location = get_location();
-            OpExp::Oper op;
+            ast::OpExp::Oper op;
             switch (kind())
             {
             case TokenKind::EqEq:
-                op = OpExp::Oper::EQ;
-                break;
-            case TokenKind::Neq:
-                op = OpExp::Oper::NE;
+                op = ast::OpExp::Oper::EQ;
                 break;
             case TokenKind::Lt:
-                op = OpExp::Oper::LT;
+                op = ast::OpExp::Oper::LT;
                 break;
             case TokenKind::Leq:
-                op = OpExp::Oper::LE;
+                op = ast::OpExp::Oper::LEQ;
                 break;
             case TokenKind::Gt:
-                op = OpExp::Oper::GT;
+                op = ast::OpExp::Oper::GT;
                 break;
             case TokenKind::Geq:
-                op = OpExp::Oper::GE;
+                op = ast::OpExp::Oper::GEQ;
+                break;
+            case TokenKind::Neq:
+                op = ast::OpExp::Oper::NEQ;
                 break;
             default:
-                op = OpExp::Oper::NONE;
+                std::unreachable();
                 break;
             }
+            auto location = get_location();
             walk();
             auto right = parse_additive_exp();
             left = make_OpExp(location, std::move(left), op, std::move(right));
@@ -475,10 +475,22 @@ namespace parser
     {
         auto left = parse_multiplicative_exp();
         while (kind() == TokenKind::Plus || kind() == TokenKind::Minus)
+
         {
-            Location location = get_location();
-            OpExp::Oper op = (kind() == TokenKind::Plus) ? OpExp::Oper::ADD
-                                                         : OpExp::Oper::SUB;
+            ast::OpExp::Oper op;
+            switch (kind())
+            {
+            case TokenKind::Plus:
+                op = ast::OpExp::Oper::ADD;
+                break;
+            case TokenKind::Minus:
+                op = ast::OpExp::Oper::SUB;
+                break;
+            default:
+                std::unreachable();
+                break;
+            }
+            auto location = get_location();
             walk();
             auto right = parse_multiplicative_exp();
             left = make_OpExp(location, std::move(left), op, std::move(right));
@@ -487,13 +499,25 @@ namespace parser
     }
 
     exp_ptr Parser::parse_multiplicative_exp()
+
     {
         auto left = parse_primary_exp();
         while (kind() == TokenKind::Mul || kind() == TokenKind::Div)
         {
-            Location location = get_location();
-            OpExp::Oper op = (kind() == TokenKind::Mul) ? OpExp::Oper::MUL
-                                                        : OpExp::Oper::DIV;
+            ast::OpExp::Oper op;
+            switch (kind())
+            {
+            case TokenKind::Mul:
+                op = ast::OpExp::Oper::MUL;
+                break;
+            case TokenKind::Div:
+                op = ast::OpExp::Oper::DIV;
+                break;
+            default:
+                std::unreachable();
+                break;
+            }
+            auto location = get_location();
             walk();
             auto right = parse_primary_exp();
             left = make_OpExp(location, std::move(left), op, std::move(right));
@@ -504,7 +528,6 @@ namespace parser
     exp_ptr Parser::parse_primary_exp()
     {
         Location location = get_location();
-
         switch (kind())
         {
         case TokenKind::IntLit: {
@@ -513,14 +536,14 @@ namespace parser
             return make_IntExp(location, val);
         }
         case TokenKind::FloatLit: {
-            float val = std::stof(value());
+            float val = std::atof(value().c_str());
             walk();
             return make_FloatExp(location, val);
         }
         case TokenKind::StringLit: {
             std::string val = value();
             walk();
-            return make_StringExp(location, std::move(val));
+            return make_StringExp(location, val);
         }
         case TokenKind::BoolLit: {
             bool val = (value() == "true");
@@ -528,22 +551,22 @@ namespace parser
             return make_BoolExp(location, val);
         }
         case TokenKind::DollarsLit: {
-            int val = std::stoi(value().substr(0, value().size() - 1));
+            int val = std::stoi(value());
             walk();
             return make_DollarsExp(location, val);
         }
         case TokenKind::ChanceLit: {
-            int val = std::stoi(value().substr(0, value().size() - 1));
+            int val = std::stoi(value());
             walk();
             return make_ChanceExp(location, val);
         }
-        case TokenKind::ReputationLit: {
+        case TokenKind::StreakLit: {
             int val = std::stoi(value());
             walk();
-            return make_ReputationExp(location, val);
+            return make_StreakExp(location, val);
         }
         case TokenKind::ID: {
-            std::string name = value();
+            auto id = value();
             walk();
             if (kind() == TokenKind::LPar)
             {
@@ -555,30 +578,25 @@ namespace parser
                     if (kind() == TokenKind::Comma)
                         walk();
                     else if (kind() != TokenKind::RPar)
-                        return fail_exp(
-                            "Expected ',' or ')' in call arguments");
+                        return fail_exp("Expected ',' or ')' after call arg");
                 }
                 if (kind() != TokenKind::RPar)
-                    return fail_exp("Expected ')' after call arguments");
+                    return fail_exp("Expected  ')' after call arg");
                 walk();
-                return make_CallExp(location, std::move(name), std::move(args));
+                return make_CallExp(location, std::move(id), std::move(args));
             }
-            return make_IdentExp(location, std::move(name));
+            return make_IdentExp(location, std::move(id));
         }
-
-        case TokenKind::LPar: {
+        case TokenKind::LBrace: {
             walk();
-            parent_count_++;
-            exp_ptr inner = parse_exp();
-            parent_count_--;
+            auto exp = parse_exp();
             if (kind() != TokenKind::RPar)
                 return fail_exp("Expected ')' after expression");
             walk();
-            return inner;
+            return exp;
         }
         default:
             return fail_exp("Expected an expression");
         }
     }
-
 } // namespace parser

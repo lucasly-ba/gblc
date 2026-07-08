@@ -29,6 +29,7 @@ namespace ast
 
         std::optional<Type> type_get() const;
         void type_set(Type type);
+        bool has_type() const;
 
         Exp* init_get() const;
         void init_set(exp_ptr init);
@@ -52,6 +53,7 @@ namespace ast
 
         std::optional<Type> type_get() const;
         void type_set(Type type);
+        bool has_type() const;
 
         const std::vector<stmt_ptr>& body_get() const;
         std::vector<stmt_ptr>& body_get();
@@ -74,6 +76,7 @@ namespace ast
 
         std::optional<int> max_players_get() const;
         void max_players_set(std::optional<int> max_players);
+        bool has_max_players() const;
 
         Exp* precondition_get() const;
         void precondition_set(exp_ptr precondition);
@@ -92,7 +95,7 @@ namespace ast
     {
     public:
         PlayerDec(const Location& location, std::string name, exp_ptr dollar,
-                  exp_ptr chance, exp_ptr reputation);
+                  exp_ptr chance, exp_ptr streak);
 
         void accept(Visitor& v) override;
 
@@ -100,13 +103,13 @@ namespace ast
         void dollar_set(exp_ptr dollar);
         Exp& chance_get() const;
         void chance_set(exp_ptr chance);
-        Exp& reputation_get() const;
-        void reputation_set(exp_ptr reputation);
+        Exp& streak_get() const;
+        void streak_set(exp_ptr streak);
 
     private:
         exp_ptr dollar_;
         exp_ptr chance_;
-        exp_ptr reputation_;
+        exp_ptr streak_;
     };
 
 } // namespace ast

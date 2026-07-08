@@ -12,7 +12,6 @@ namespace parser
         Requires,
         Scene,
         If,
-        Then,
         Else,
         Loop,
         Break,
@@ -20,7 +19,7 @@ namespace parser
         Player,
         Max,
         Start,
-        Reputation,
+        Streak,
 
         // Types
         Int,
@@ -68,7 +67,7 @@ namespace parser
         BoolLit,
         DollarsLit,
         ChanceLit,
-        ReputationLit,
+        StreakLit,
 
         // Others
         ID,
@@ -91,7 +90,6 @@ namespace parser
         { "requires", TokenKind::Requires },
         { "scene", TokenKind::Scene },
         { "if", TokenKind::If },
-        { "then", TokenKind::Then },
         { "else", TokenKind::Else },
         { "loop", TokenKind::Loop },
         { "break", TokenKind::Break },
@@ -102,12 +100,13 @@ namespace parser
         { "bool", TokenKind::Bool },
         { "dollars", TokenKind::Dollars },
         { "chance", TokenKind::Chance },
-        { "reputation", TokenKind::Reputation },
+        { "streak", TokenKind::Streak },
         { "true", TokenKind::BoolLit },
         { "false", TokenKind::BoolLit },
         { "enters", TokenKind::Enter },
         { "start", TokenKind::Start },
         { "max", TokenKind::Max },
+        { "player", TokenKind::Player },
     };
 
     inline TokenKind player_info_kind(char c)
@@ -118,8 +117,8 @@ namespace parser
             return TokenKind::DollarsLit;
         case '%':
             return TokenKind::ChanceLit;
-        case '*':
-            return TokenKind::ReputationLit;
+        case 'x':
+            return TokenKind::StreakLit;
         default:
             return TokenKind::Error;
         }
@@ -139,8 +138,6 @@ namespace parser
             return "Scene";
         case TokenKind::If:
             return "If";
-        case TokenKind::Then:
-            return "Then";
         case TokenKind::Else:
             return "Else";
         case TokenKind::Loop:
@@ -161,8 +158,8 @@ namespace parser
             return "Dollars";
         case TokenKind::Chance:
             return "Chance";
-        case TokenKind::Reputation:
-            return "Reputation";
+        case TokenKind::Streak:
+            return "Streak";
         case TokenKind::Enter:
             return "Enter";
         case TokenKind::Plus:
@@ -213,8 +210,8 @@ namespace parser
             return "DollarsLit";
         case TokenKind::ChanceLit:
             return "ChanceLit";
-        case TokenKind::ReputationLit:
-            return "ReputationLit";
+        case TokenKind::StreakLit:
+            return "StreakLit";
         case TokenKind::ID:
             return "ID";
         case TokenKind::Eof:
@@ -227,6 +224,8 @@ namespace parser
             return "Start";
         case TokenKind::Max:
             return "Max";
+        case TokenKind::Player:
+            return "Player";
         default:
             return "Unknown";
         }

@@ -21,14 +21,13 @@ namespace ast
             MUL,
             DIV,
             EQ,
-            NE,
+            NEQ,
             LT,
-            LE,
+            LEQ,
             GT,
-            GE,
+            GEQ,
             AND,
             OR,
-            NONE,
         };
         OpExp(const Location& location, exp_ptr left, Oper oper, exp_ptr right);
 
@@ -121,10 +120,10 @@ namespace ast
         void accept(Visitor& v) override;
     };
 
-    class ReputationExp : public IntExp
+    class StreakExp : public IntExp
     {
     public:
-        ReputationExp(const Location& location, int value);
+        StreakExp(const Location& location, int value);
 
         void accept(Visitor& v) override;
     };

@@ -4,6 +4,7 @@
 namespace ast
 {
     class Ast;
+    class Program;
 
     class Dec;
     class VarDec;
@@ -19,7 +20,7 @@ namespace ast
     class BoolExp;
     class DollarsExp;
     class ChanceExp;
-    class ReputationExp;
+    class StreakExp;
     class CallExp;
     class IdentExp;
 

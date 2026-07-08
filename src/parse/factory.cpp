@@ -41,11 +41,11 @@ namespace parser
     }
 
     dec_ptr make_PlayerDec(const Location& location, std::string name,
-                           exp_ptr dollars, exp_ptr chance, exp_ptr reputation)
+                           exp_ptr dollars, exp_ptr chance, exp_ptr streak)
     {
         return std::make_unique<PlayerDec>(
             location, std::move(name), std::move(dollars), std::move(chance),
-            std::move(reputation));
+            std::move(streak));
     }
 
     exp_ptr make_OpExp(const Location& location, exp_ptr left, OpExp::Oper oper,
@@ -85,9 +85,9 @@ namespace parser
         return std::make_unique<ChanceExp>(location, value);
     }
 
-    exp_ptr make_ReputationExp(const Location& location, int value)
+    exp_ptr make_StreakExp(const Location& location, int value)
     {
-        return std::make_unique<ReputationExp>(location, value);
+        return std::make_unique<StreakExp>(location, value);
     }
 
     exp_ptr make_CallExp(const Location& location, std::string name,
