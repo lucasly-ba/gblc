@@ -13,11 +13,11 @@ int main(int argc, char* argv[])
 
     std::string input_file;
     bool lex_trace = false;
-    bool parse_trace = false;
+    bool print_ast = false;
 
     app.add_option("file", input_file, "Input .gblc file")->required();
     app.add_flag("--lex-trace", lex_trace, "Trace the lexer");
-    app.add_flag("--parse-trace", parse_trace, "Trace the parser");
+    app.add_flag("--print-ast", print_ast, "Pretty-print the AST");
 
     CLI11_PARSE(app, argc, argv);
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    parser::Parser parser(parse_trace, tokens);
+    parser::Parser parser(tokens);
     ast::Program program = parser.parse_program();
     if (parser.has_error())
     {
@@ -46,7 +46,10 @@ int main(int argc, char* argv[])
                       << err.col << "\n";
         return 2;
     }
-    ast::PrintAst ast_printer(std::cout);
-    for (auto& dec : program.decs_get())
-        dec->accept(ast_printer);
+    if (print_ast)
+    {
+        ast::PrintAst ast_printer(std::cout);
+        for (auto& dec : program.decs_get())
+            dec->accept(ast_printer);
+    }
 }
