@@ -21,7 +21,7 @@ namespace parser
     class Parser
     {
     public:
-        Parser(bool trace, std::vector<Token> tokens);
+        Parser(std::vector<Token> tokens);
         ast::Program parse_program();
         const std::vector<ParseError>& get_errors() const;
         bool has_error() const;
@@ -76,7 +76,6 @@ namespace parser
 
         Location get_location() const;
 
-        bool trace_;
         size_t pos_ = 0;
         std::vector<Token> tokens_;
         std::vector<ParseError> errors_;

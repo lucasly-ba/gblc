@@ -15,9 +15,8 @@ namespace parser
 {
     using namespace ast;
 
-    Parser::Parser(bool trace, std::vector<Token> tokens)
-        : trace_(trace)
-        , tokens_(std::move(tokens))
+    Parser::Parser(std::vector<Token> tokens)
+        : tokens_(std::move(tokens))
     {}
 
     Program Parser::parse_program()
@@ -587,7 +586,7 @@ namespace parser
             }
             return make_IdentExp(location, std::move(id));
         }
-        case TokenKind::LBrace: {
+        case TokenKind::LPar: {
             walk();
             auto exp = parse_exp();
             if (kind() != TokenKind::RPar)
