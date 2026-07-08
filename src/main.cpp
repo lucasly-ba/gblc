@@ -1,8 +1,10 @@
 #include <CLI/CLI.hpp>
+#include <all.h>
 #include <fstream>
 #include <iostream>
 #include <lexer.h>
 #include <parser.h>
+#include <print-ast.h>
 #include <sstream>
 
 int main(int argc, char* argv[])
@@ -36,7 +38,7 @@ int main(int argc, char* argv[])
     }
 
     parser::Parser parser(parse_trace, tokens);
-    auto program = parser.parse_program();
+    ast::Program program = parser.parse_program();
     if (parser.has_error())
     {
         for (auto& err : parser.get_errors())
@@ -44,4 +46,7 @@ int main(int argc, char* argv[])
                       << err.col << "\n";
         return 2;
     }
+    ast::PrintAst ast_printer(std::cout);
+    for (auto& dec : program.decs_get())
+        dec->accept(ast_printer);
 }
