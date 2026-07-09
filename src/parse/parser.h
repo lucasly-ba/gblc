@@ -1,11 +1,10 @@
 #pragma once
 
+#include <ast/all.h>
 #include <ast/ast.h>
 #include <set>
 #include <token.h>
 #include <vector>
-
-#include "fwd.h"
 
 namespace parser
 {

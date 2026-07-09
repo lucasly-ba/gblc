@@ -1,15 +1,8 @@
-#include <ast/all.h>
 #include <factory.h>
 #include <optional>
 #include <parser.h>
 #include <set>
-#include <token.h>
-#include <type.h>
 #include <utility>
-
-#include "ast.h"
-#include "exp.h"
-#include "fwd.h"
 
 namespace parser
 {
