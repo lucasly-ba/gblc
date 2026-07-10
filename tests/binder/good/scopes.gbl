@@ -1,0 +1,15 @@
+player p { dollars: 100$, chance: 50%, streak: 0x }
+
+fn f() -> int {
+	var a = 1;
+	if a > 0 {
+		var b = a;
+		return b;
+	}
+	return a;
+}
+
+scene main
+{
+	var r = f();
+}

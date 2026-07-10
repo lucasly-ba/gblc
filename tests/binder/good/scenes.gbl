@@ -1,0 +1,13 @@
+player alice { dollars: 100$, chance: 50%, streak: 0x }
+player bob { dollars: 100$, chance: 50%, streak: 0x }
+
+scene main
+{
+	alice enters lobby;
+	bob enters lobby;
+	start lobby;
+}
+
+scene lobby
+{
+}
