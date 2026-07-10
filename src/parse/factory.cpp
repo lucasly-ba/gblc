@@ -1,7 +1,3 @@
-#include <ast/all.h>
-#include <ast/dec.h>
-#include <ast/exp.h>
-#include <ast/stmt.h>
 #include <factory.h>
 
 namespace parser

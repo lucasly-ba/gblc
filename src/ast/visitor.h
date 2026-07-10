@@ -1,5 +1,5 @@
 #pragma once
-#include <ast/fwd.h>
+#include <all.h>
 
 namespace ast
 {

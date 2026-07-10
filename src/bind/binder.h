@@ -1,8 +1,7 @@
 #pragma once
 
-#include <ast/all.h>
-#include <ast/ast.h>
-#include <ast/main-visitor.h>
+#include <all.h>
+#include <main-visitor.h>
 #include <scope.h>
 
 namespace bind

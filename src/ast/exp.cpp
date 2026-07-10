@@ -1,5 +1,5 @@
-#include <ast/exp.h>
-#include <ast/visitor.h>
+#include <exp.h>
+#include <visitor.h>
 
 namespace ast
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include <ast/all.h>
+#include <all.h>
 #include <map>
 namespace bind
 {

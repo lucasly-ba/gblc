@@ -1,7 +1,5 @@
 #pragma once
-#include <ast/all.h>
-#include <ast/ast.h>
-#include <ast/type.h>
+#include <all.h>
 #include <memory>
 #include <optional>
 #include <string>

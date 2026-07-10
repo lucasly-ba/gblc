@@ -1,5 +1,5 @@
 #pragma once
-#include <ast/visitor.h>
+#include <visitor.h>
 
 namespace ast
 {

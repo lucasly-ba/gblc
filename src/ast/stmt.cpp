@@ -1,8 +1,8 @@
-#include <ast/dec.h>
-#include <ast/exp.h>
-#include <ast/stmt.h>
-#include <ast/type.h>
-#include <ast/visitor.h>
+#include <dec.h>
+#include <exp.h>
+#include <stmt.h>
+#include <type.h>
+#include <visitor.h>
 
 namespace ast
 {

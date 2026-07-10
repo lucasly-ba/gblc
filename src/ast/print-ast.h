@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ast/main-visitor.h>
+#include <main-visitor.h>
 
 namespace ast
 {

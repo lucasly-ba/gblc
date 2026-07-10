@@ -1,5 +1,5 @@
 #include <ast.h>
-#include <ast/all.h>
+#include <ast/dec.h>
 
 namespace ast
 {

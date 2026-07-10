@@ -1,9 +1,5 @@
-#include <ast/all.h>
-#include <cstdio>
 #include <lexer.h>
 #include <parser.h>
-
-#include "token.h"
 
 /// Lexer
 namespace parser

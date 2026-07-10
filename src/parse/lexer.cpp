@@ -2,8 +2,7 @@
 #include <format>
 #include <iostream>
 #include <lexer.h>
-
-#include "token.h"
+#include <token.h>
 
 namespace parser
 {

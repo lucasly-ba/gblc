@@ -1,9 +1,6 @@
 #pragma once
-#include <ast/ast.h>
-#include <ast/fwd.h>
-#include <ast/type.h>
-#include <optional>
-#include <vector>
+#include <ast.h>
+#include <type.h>
 
 namespace ast
 {

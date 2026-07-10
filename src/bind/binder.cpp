@@ -1,6 +1,4 @@
-#include <ast/all.h>
 #include <binder.h>
-#include <dec.h>
 #include <set>
 namespace bind
 {

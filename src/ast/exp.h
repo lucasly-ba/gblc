@@ -1,6 +1,5 @@
 #pragma once
-#include <ast/ast.h>
-#include <ast/fwd.h>
+#include <ast.h>
 #include <vector>
 
 namespace ast

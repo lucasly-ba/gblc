@@ -1,7 +1,6 @@
 #pragma once
 
-#include <ast/all.h>
-#include <ast/ast.h>
+#include <all.h>
 #include <set>
 #include <token.h>
 #include <vector>

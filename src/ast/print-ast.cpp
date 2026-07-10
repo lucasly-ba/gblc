@@ -1,8 +1,6 @@
-#include <ast/all.h>
-#include <ast/print-ast.h>
 #include <dec.h>
 #include <exp.h>
-#include <ios>
+#include <print-ast.h>
 #include <stmt.h>
 
 namespace ast

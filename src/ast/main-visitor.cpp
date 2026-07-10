@@ -1,8 +1,5 @@
-#include <ast/all.h>
-#include <ast/main-visitor.h>
-
-#include "exp.h"
-#include "stmt.h"
+#include <all.h>
+#include <main-visitor.h>
 
 namespace ast
 {
