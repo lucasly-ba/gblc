@@ -91,7 +91,7 @@ namespace ast
         }
         ostr_ << ")";
         if (e.has_type())
-            ostr_ << " ->" << to_string(e.type_get().value());
+            ostr_ << " ->" << to_string(e.type_get());
         ostr_ << "\n{\n";
         for (auto& stmt : e.body_get())
             ostr_ << "\t" << *stmt;

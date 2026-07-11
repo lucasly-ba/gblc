@@ -40,15 +40,15 @@ namespace ast
     {
     public:
         FuncDec(const Location& location, std::string name,
-                std::vector<std::unique_ptr<VarDec>> args,
-                std::optional<Type> type, std::vector<stmt_ptr> body);
+                std::vector<std::unique_ptr<VarDec>> args, Type type,
+                std::vector<stmt_ptr> body);
         void accept(Visitor& v) override;
 
         const std::vector<std::unique_ptr<VarDec>>& args_get() const;
         std::vector<std::unique_ptr<VarDec>>& args_get();
         void args_set(std::vector<std::unique_ptr<VarDec>> args);
 
-        std::optional<Type> type_get() const;
+        Type type_get() const;
         void type_set(Type type);
         bool has_type() const;
 
@@ -58,7 +58,7 @@ namespace ast
 
     private:
         std::vector<std::unique_ptr<VarDec>> args_;
-        std::optional<Type> type_;
+        Type type_;
         std::vector<stmt_ptr> body_;
     };
 

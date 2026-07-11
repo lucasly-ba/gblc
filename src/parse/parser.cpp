@@ -4,6 +4,8 @@
 #include <set>
 #include <utility>
 
+#include "type.h"
+
 namespace parser
 {
     using namespace ast;
@@ -123,7 +125,7 @@ namespace parser
         Location location = get_location();
         walk();
         std::string name;
-        std::optional<Type> type = std::nullopt;
+        Type type = ast::Type::Void;
         std::vector<std::unique_ptr<VarDec>> args;
         std::vector<ast::stmt_ptr> body;
 
@@ -136,9 +138,10 @@ namespace parser
         if (kind() == TokenKind::Arrow)
         {
             walk();
-            type = get_type(value());
-            if (!type.has_value())
+            auto t = get_type(value());
+            if (!t.has_value())
                 return fail_dec("Unexpected type name");
+            type = t.value();
             walk();
         }
         if (kind() != TokenKind::LBrace)

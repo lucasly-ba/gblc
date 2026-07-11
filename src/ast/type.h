@@ -13,6 +13,7 @@ namespace ast
         Dollars,
         Chance,
         Streak,
+        Void,
     };
 
     std::optional<Type> get_type(const std::string& value);

@@ -16,8 +16,8 @@ namespace parser
                                              ast::exp_ptr init);
 
     dec_ptr make_FuncDec(const Location& location, std::string name,
-                         std::vector<std::unique_ptr<VarDec>> args,
-                         std::optional<Type> type, std::vector<stmt_ptr> body);
+                         std::vector<std::unique_ptr<VarDec>> args, Type type,
+                         std::vector<stmt_ptr> body);
 
     ast::dec_ptr make_SceneDec(const ast::Location& location, std::string name,
                                std::optional<int> max_players,

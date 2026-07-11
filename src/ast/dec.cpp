@@ -65,8 +65,8 @@ namespace ast
     }
 
     FuncDec::FuncDec(const Location& location, std::string name,
-                     std::vector<std::unique_ptr<VarDec>> args,
-                     std::optional<Type> type, std::vector<stmt_ptr> body)
+                     std::vector<std::unique_ptr<VarDec>> args, Type type,
+                     std::vector<stmt_ptr> body)
         : Dec(location, std::move(name))
         , args_(std::move(args))
         , type_(type)
@@ -93,7 +93,7 @@ namespace ast
         args_ = std::move(args);
     }
 
-    std::optional<Type> FuncDec::type_get() const
+    Type FuncDec::type_get() const
     {
         return type_;
     }
@@ -105,7 +105,7 @@ namespace ast
 
     bool FuncDec::has_type() const
     {
-        return type_.has_value();
+        return type_ != Type::Void;
     }
 
     const std::vector<stmt_ptr>& FuncDec::body_get() const

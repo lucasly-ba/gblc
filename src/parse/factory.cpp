@@ -20,8 +20,8 @@ namespace parser
     }
 
     dec_ptr make_FuncDec(const Location& location, std::string name,
-                         std::vector<std::unique_ptr<VarDec>> args,
-                         std::optional<Type> type, std::vector<stmt_ptr> body)
+                         std::vector<std::unique_ptr<VarDec>> args, Type type,
+                         std::vector<stmt_ptr> body)
     {
         return std::make_unique<FuncDec>(
             location, std::move(name), std::move(args), type, std::move(body));

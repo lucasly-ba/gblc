@@ -40,6 +40,8 @@ namespace ast
             return "chance";
         case Type::Streak:
             return "streak";
+        case Type::Void:
+            return "void";
         default:
             return "unknown";
         }
