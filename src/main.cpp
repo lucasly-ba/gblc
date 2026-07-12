@@ -1,12 +1,12 @@
 #include <CLI/CLI.hpp>
-#include <binder.h>
+#include <bind/binder.h>
 #include <fstream>
 #include <iostream>
-#include <lexer.h>
-#include <parser.h>
-#include <print-ast.h>
+#include <parse/lexer.h>
+#include <parse/parser.h>
+#include <ast/print-ast.h>
 #include <sstream>
-#include <type-checker.h>
+#include <type/type-checker.h>
 
 int main(int argc, char* argv[])
 {
