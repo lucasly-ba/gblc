@@ -1,8 +1,8 @@
 #pragma once
 
-#include <all.h>
-#include <main-visitor.h>
-#include <scope.h>
+#include <ast/all.h>
+#include <ast/ast-visitor.h>
+#include <bind/scope.h>
 
 namespace bind
 {
@@ -14,7 +14,7 @@ namespace bind
         Location location;
     };
 
-    class Binder : public MainVisitor
+    class Binder : public Visitor
     {
     public:
         Binder() = default;

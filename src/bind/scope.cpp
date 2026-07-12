@@ -1,5 +1,5 @@
 #include <ranges>
-#include <scope.h>
+#include <bind/scope.h>
 
 namespace bind
 {
