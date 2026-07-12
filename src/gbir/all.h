@@ -1,0 +1,15 @@
+#pragma once
+#include <gbir/basic-block.h>
+#include <gbir/function.h>
+#include <gbir/fwd.h>
+#include <gbir/inst/binop.h>
+#include <gbir/inst/call.h>
+#include <gbir/inst/const.h>
+#include <gbir/inst/inst.h>
+#include <gbir/inst/mem.h>
+#include <gbir/inst/phi.h>
+#include <gbir/inst/scene.h>
+#include <gbir/inst/terminator.h>
+#include <gbir/module.h>
+#include <gbir/value.h>
+#include <gbir/visitor.h>
