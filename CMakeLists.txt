@@ -31,7 +31,7 @@ set(SOURCES
     src/ast/stmt.cpp
     src/ast/type.cpp
     src/ast/print-ast.cpp
-    src/ast/main-visitor.cpp
+    src/ast/ast-visitor.cpp
     src/parse/lexer.cpp
     src/parse/parser.cpp
     src/parse/utils.cpp
@@ -39,6 +39,20 @@ set(SOURCES
     src/bind/binder.cpp
     src/bind/scope.cpp
     src/type/type-checker.cpp
+    src/gbir/value.cpp
+    src/gbir/module.cpp
+    src/gbir/function.cpp
+    src/gbir/basic-block.cpp
+    src/gbir/gbir-visitor.cpp
+    src/gbir/inst/inst.cpp
+    src/gbir/inst/const.cpp
+    src/gbir/inst/binop.cpp
+    src/gbir/inst/call.cpp
+    src/gbir/inst/mem.cpp
+    src/gbir/inst/phi.cpp
+    src/gbir/inst/scene.cpp
+    src/gbir/inst/enters.cpp
+    src/gbir/inst/terminator.cpp
     src/llvm/codegen.cpp
 )
 
@@ -54,11 +68,6 @@ set_target_properties(gblc PROPERTIES
 
 target_include_directories(gblc PRIVATE
     src/
-    src/ast/
-    src/parse/
-    src/bind/
-    src/type/
-    src/llvm/
     ${LLVM_INCLUDE_DIRS}
 )
 
