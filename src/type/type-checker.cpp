@@ -1,10 +1,10 @@
 #include <optional>
-#include <type-checker.h>
+#include <type/type-checker.h>
 
-#include "dec.h"
-#include "exp.h"
-#include "stmt.h"
-#include "type.h"
+#include <ast/dec.h>
+#include <ast/exp.h>
+#include <ast/stmt.h>
+#include <ast/type.h>
 
 namespace type
 {

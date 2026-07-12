@@ -1,7 +1,7 @@
 #pragma once
 
-#include <all.h>
-#include <main-visitor.h>
+#include <ast/all.h>
+#include <ast/ast-visitor.h>
 
 namespace type
 {
@@ -13,7 +13,7 @@ namespace type
         Location location;
     };
 
-    class TypeChecker : public MainVisitor
+    class TypeChecker : public Visitor
     {
     public:
         TypeChecker() = default;
