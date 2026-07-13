@@ -10,10 +10,12 @@ namespace gbir
     public:
         GbirModule() = default;
 
-        const std::vector<std::unique_ptr<GbirFunction>>& functions_get() const;
-        std::vector<std::unique_ptr<GbirFunction>>& functions_get();
+        const std::vector<std::unique_ptr<GbirTopLevel>>&
+        top_levels_get() const;
+        std::vector<std::unique_ptr<GbirTopLevel>>& top_levels_get();
+        void add_top_level(std::unique_ptr<GbirTopLevel> top_level);
 
     private:
-        std::vector<std::unique_ptr<GbirFunction>> functions_;
+        std::vector<std::unique_ptr<GbirTopLevel>> top_levels_;
     };
 } // namespace gbir
