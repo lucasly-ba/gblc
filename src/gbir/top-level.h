@@ -21,7 +21,8 @@ namespace gbir
     {
     public:
         GbirFunction(std::string name, std::vector<GbirValue> args,
-                     ast::Type return_type);
+                     ast::Type return_type,
+                     std::vector<std::unique_ptr<GbirBasicBlock>> blocks);
         void accept(GbirVisitorBase& v) override;
 
         const std::string& name_get() const;
@@ -35,7 +36,6 @@ namespace gbir
 
         const std::vector<std::unique_ptr<GbirBasicBlock>>& blocks_get() const;
         std::vector<std::unique_ptr<GbirBasicBlock>>& blocks_get();
-        void add_block(std::unique_ptr<GbirBasicBlock> block);
 
     private:
         std::string name_;
@@ -47,7 +47,8 @@ namespace gbir
     class GbirGlobalVar : public GbirTopLevel
     {
     public:
-        GbirGlobalVar(std::string name, ast::Type type, int init_value);
+        GbirGlobalVar(std::string name, ast::Type type,
+                      std::unique_ptr<GbirInst> init);
         void accept(GbirVisitorBase& v) override;
 
         const std::string& name_get() const;
@@ -56,13 +57,13 @@ namespace gbir
         ast::Type type_get() const;
         void type_set(ast::Type type);
 
-        int init_value_get() const;
-        void init_value_set(int init_value);
+        GbirInst* init_get() const;
+        void init_set(std::unique_ptr<GbirInst> init);
 
     private:
         std::string name_;
         ast::Type type_;
-        int init_value_;
+        std::unique_ptr<GbirInst> init_;
     };
 
     class GbirPlayer : public GbirTopLevel

@@ -1,12 +1,18 @@
 #include <gbir/top-level.h>
+#include <memory>
+#include <vector>
+
+#include "gbir/basic-block.h"
 
 namespace gbir
 {
-    GbirFunction::GbirFunction(std::string name, std::vector<GbirValue> args,
-                               ast::Type return_type)
+    GbirFunction::GbirFunction(
+        std::string name, std::vector<GbirValue> args, ast::Type return_type,
+        std::vector<std::unique_ptr<GbirBasicBlock>> blocks)
         : name_(std::move(name))
         , args_(std::move(args))
         , return_type_(return_type)
+        , blocks_(std::move(blocks))
     {}
 
     void GbirFunction::accept(GbirVisitorBase& v)
@@ -55,16 +61,11 @@ namespace gbir
         return blocks_;
     }
 
-    void GbirFunction::add_block(std::unique_ptr<GbirBasicBlock> block)
-    {
-        blocks_.push_back(std::move(block));
-    }
-
     GbirGlobalVar::GbirGlobalVar(std::string name, ast::Type type,
-                                 int init_value)
+                                 std::unique_ptr<GbirInst> init)
         : name_(std::move(name))
         , type_(type)
-        , init_value_(init_value)
+        , init_(std::move(init))
     {}
 
     void GbirGlobalVar::accept(GbirVisitorBase& v)
@@ -92,14 +93,14 @@ namespace gbir
         type_ = type;
     }
 
-    int GbirGlobalVar::init_value_get() const
+    GbirInst* GbirGlobalVar::init_get() const
     {
-        return init_value_;
+        return init_.get();
     }
 
-    void GbirGlobalVar::init_value_set(int init_value)
+    void GbirGlobalVar::init_set(std::unique_ptr<GbirInst> init)
     {
-        init_value_ = init_value;
+        init_ = std::move(init);
     }
 
     GbirPlayer::GbirPlayer(std::string name, int dollar, int chance, int streak)
