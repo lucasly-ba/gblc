@@ -1,6 +1,8 @@
 #include <CLI/CLI.hpp>
 #include <bind/binder.h>
 #include <fstream>
+#include <gbir-gen/gbir-gen.h>
+#include <gbir/print-gbir.h>
 #include <iostream>
 #include <parse/lexer.h>
 #include <parse/parser.h>
@@ -15,11 +17,13 @@ int main(int argc, char* argv[])
     std::string input_file;
     bool lex_trace = false;
     bool print_ast = false;
+    bool print_gbir = false;
     bool bindings = false;
 
     app.add_option("file", input_file, "Input .gblc file")->required();
     app.add_flag("--lex-trace", lex_trace, "Trace the lexer");
     app.add_flag("--print-ast", print_ast, "Pretty-print the AST");
+    app.add_flag("--print-gbir", print_gbir, "Pretty-print the GBIR");
     app.add_flag("--bindings", bindings,
                  "Annotate --print-ast names with their resolved definitions");
 
@@ -51,7 +55,7 @@ int main(int argc, char* argv[])
         return 2;
     }
 
-    if (!print_ast || bindings)
+    if (!print_ast || bindings || print_gbir)
     {
         bind::Binder binder;
         binder.bind_program(program);
@@ -81,5 +85,13 @@ int main(int argc, char* argv[])
         ast::PrintAst ast_printer(std::cout, bindings);
         for (auto& dec : program.decs_get())
             dec->accept(ast_printer);
+    }
+
+    if (print_gbir)
+    {
+        gbir::GbirGen gbir_gen;
+        gbir_gen.generate_gbir(program);
+        gbir::PrintGbir gbir_printer(std::cout);
+        gbir_printer.print(gbir_gen.module_get());
     }
 }
