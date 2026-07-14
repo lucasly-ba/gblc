@@ -81,6 +81,13 @@ namespace gbir
         for (auto& stmt : e.body_get())
             stmt->accept(*this);
 
+        if (!current_block_->has_terminator())
+        {
+            GbirValue void_value(next_value_id_++, ast::Type::Void);
+            current_block_->terminator_set(
+                std::make_unique<ReturnInst>(void_value));
+        }
+
         next_bb_label_id_ = 0;
         module_.add_top_level(std::move(func));
         current_blocks_ = nullptr;
@@ -113,6 +120,13 @@ namespace gbir
 
         for (auto& stmt : e.body_get())
             stmt->accept(*this);
+
+        if (!current_block_->has_terminator())
+        {
+            GbirValue void_value(next_value_id_++, ast::Type::Void);
+            current_block_->terminator_set(
+                std::make_unique<ReturnInst>(void_value));
+        }
 
         next_bb_label_id_ = 0;
         module_.add_top_level(std::move(scene));

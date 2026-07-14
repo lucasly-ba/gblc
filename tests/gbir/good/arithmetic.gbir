@@ -29,5 +29,6 @@ bb0:
   %2 = const_int 4 : $int
   %3 = call @compute(%1, %2) : $int
   store %3 to %0 : $int
+  return %4 : $void
 }
 

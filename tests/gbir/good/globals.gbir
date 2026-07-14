@@ -14,5 +14,6 @@ sil_global @gs : $string = {
 
 sil_scene @main {
 bb0:
+  return %0 : $void
 }
 

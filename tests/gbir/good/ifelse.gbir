@@ -15,6 +15,7 @@ bb2:
   %6 = const_int 0 : $int
   return %6 : $int
 bb3:
+  return %7 : $void
 }
 
 sil_scene @main {
@@ -23,5 +24,6 @@ bb0:
   %1 = const_int 5 : $int
   %2 = call @sign(%1) : $int
   store %2 to %0 : $int
+  return %3 : $void
 }
 
