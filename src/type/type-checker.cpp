@@ -251,6 +251,14 @@ namespace type
                        e.location_get());
             return;
         }
+        if (vardec->is_top_level_get())
+        {
+            emit_error(e.name_get()
+                           + " is a top level variable, cannot assign it to "
+                             "another value",
+                       e.location_get());
+            return;
+        }
         e.value_get().accept(*this);
         if (current_type_ != vardec->type_get().value())
             emit_error("cannot assign " + to_string(current_type_)
