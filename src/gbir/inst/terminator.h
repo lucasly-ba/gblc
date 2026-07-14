@@ -5,7 +5,10 @@
 
 namespace gbir
 {
-    class CondBranchInst : public GbirInst
+    class TerminatorInst : public GbirInst
+    {};
+
+    class CondBranchInst : public TerminatorInst
     {
     public:
         CondBranchInst(GbirValue condition, GbirBasicBlock* then_bb,
@@ -25,7 +28,7 @@ namespace gbir
         GbirBasicBlock* else_bb_;
     };
 
-    class BranchInst : public GbirInst
+    class BranchInst : public TerminatorInst
     {
     public:
         explicit BranchInst(GbirBasicBlock* target_bb);
@@ -38,7 +41,7 @@ namespace gbir
         GbirBasicBlock* target_bb_;
     };
 
-    class ReturnInst : public GbirInst
+    class ReturnInst : public TerminatorInst
     {
     public:
         explicit ReturnInst(GbirValue value);
