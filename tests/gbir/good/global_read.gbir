@@ -1,10 +1,10 @@
-sil_player @p { dollars 100, chance 50, streak 0 }
+gbir_player @p { dollars 100, chance 50, streak 0 }
 
-sil_global @base : $int = {
+gbir_global @base : $int = {
   %0 = const_int 100 : $int
 }
 
-sil @bonus(%0 : $int) -> $int {
+gbir @bonus(%0 : $int) -> $int {
 bb0:
   %1 = alloca $int
   store %0 to %1 : $int
@@ -15,7 +15,7 @@ bb0:
   return %5 : $int
 }
 
-sil_scene @main {
+gbir_scene @main {
 bb0:
   %0 = alloca $int
   %1 = const_int 5 : $int

@@ -1,18 +1,18 @@
-sil_player @p { dollars 100, chance 50, streak 0 }
+gbir_player @p { dollars 100, chance 50, streak 0 }
 
-sil_global @gi : $int = {
+gbir_global @gi : $int = {
   %0 = const_int 42 : $int
 }
 
-sil_global @gb : $bool = {
+gbir_global @gb : $bool = {
   %0 = const_bool true : $bool
 }
 
-sil_global @gs : $string = {
+gbir_global @gs : $string = {
   %0 = const_string "hi" : $string
 }
 
-sil_scene @main {
+gbir_scene @main {
 bb0:
   return %0 : $void
 }

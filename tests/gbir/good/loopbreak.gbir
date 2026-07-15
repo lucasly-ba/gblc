@@ -1,6 +1,6 @@
-sil_player @p { dollars 100, chance 50, streak 0 }
+gbir_player @p { dollars 100, chance 50, streak 0 }
 
-sil @count(%0 : $int) -> $int {
+gbir @count(%0 : $int) -> $int {
 bb0:
   %1 = alloca $int
   store %0 to %1 : $int
@@ -27,7 +27,7 @@ bb2:
   return %8 : $int
 }
 
-sil_scene @main {
+gbir_scene @main {
 bb0:
   %0 = alloca $int
   %1 = const_int 0 : $int

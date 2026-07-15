@@ -1,6 +1,6 @@
-sil_player @p { dollars 100, chance 50, streak 0 }
+gbir_player @p { dollars 100, chance 50, streak 0 }
 
-sil_scene @boss max 2 requires %2 {
+gbir_scene @boss max 2 requires %2 {
 pre0:
   %0 = const_int 5 : $int
   %1 = const_int 3 : $int
@@ -12,7 +12,7 @@ bb0:
   return %5 : $void
 }
 
-sil_scene @lobby max 4 {
+gbir_scene @lobby max 4 {
 bb0:
   %0 = alloca $int
   %1 = const_int 1 : $int
@@ -20,7 +20,7 @@ bb0:
   return %2 : $void
 }
 
-sil_scene @main {
+gbir_scene @main {
 bb0:
   %0 = alloca $int
   %1 = const_int 1 : $int
