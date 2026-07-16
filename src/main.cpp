@@ -2,6 +2,7 @@
 #include <bind/binder.h>
 #include <fstream>
 #include <gbir-gen/gbir-gen.h>
+#include <gbir-opti/pipeline.h>
 #include <gbir/print-gbir.h>
 #include <iostream>
 #include <parse/lexer.h>
@@ -19,11 +20,13 @@ int main(int argc, char* argv[])
     bool print_ast = false;
     bool print_gbir = false;
     bool bindings = false;
+    bool opti = false;
 
     app.add_option("file", input_file, "Input .gblc file")->required();
     app.add_flag("--lex-trace", lex_trace, "Trace the lexer");
     app.add_flag("--print-ast", print_ast, "Pretty-print the AST");
     app.add_flag("--print-gbir", print_gbir, "Pretty-print the GBIR");
+    app.add_flag("--opti", opti, "Run the GBIR optimization pipeline");
     app.add_flag("--bindings", bindings,
                  "Annotate --print-ast names with their resolved definitions");
 
@@ -91,6 +94,8 @@ int main(int argc, char* argv[])
     {
         gbir::GbirGen gbir_gen;
         gbir_gen.generate_gbir(program);
+        if (opti)
+            gbir::optimize(gbir_gen.module_get());
         gbir::PrintGbir gbir_printer(std::cout);
         gbir_printer.print(gbir_gen.module_get());
     }

@@ -56,6 +56,11 @@ set(SOURCES
     src/gbir/inst/global.cpp
     src/gbir-gen/gbir-gen.cpp
     src/gbir-gen/factory.cpp
+    src/gbir-opti/dead-block.cpp
+    src/gbir-opti/dominance.cpp
+    src/gbir-opti/mem2reg.cpp
+    src/gbir-opti/dead-code-elimination.cpp
+    src/gbir-opti/pipeline.cpp
     src/llvm/codegen.cpp
 )
 
